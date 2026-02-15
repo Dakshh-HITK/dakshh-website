@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import generateCode from "@/lib/generateTeamID";
 import Event, { IEventDocument } from "@/lib/models/Events";
 import Registration from "@/lib/models/Registrations";
 import connect from "@/lib/mongoose";
@@ -31,15 +32,19 @@ export async function POST(
             );
         }
 
-        if (event.isTeamEvent) {
-            return NextResponse.json({ error: "Not a Solo Event" }, { status: 400 });
+        if (!event.isTeamEvent) {
+            return NextResponse.json({ error: "This event is a Solo Event" }, { status: 400 });
         }
         if (event.isPaidEvent) {
             return NextResponse.json({ error: "The Event is a paid event" }, { status: 400 });
         }
 
+        const newCode = `DAKSHH-${generateCode()}`;
+
         const newRegistration = new Registration({
             eventId: event._id,
+            isTeam: true,
+            teamId: newCode,
             owner: session.user.id,
             verified: true
         });
@@ -49,7 +54,10 @@ export async function POST(
             await Promise.all([newRegistration.save(), event.save()]);
         }
 
-        return NextResponse.json({ message: `Registered in ${event.eventName} Successfully!` }, { status: 201 });
+        return NextResponse.json({ 
+            message: `Registered in ${event.eventName} Successfully!`,
+            eventId: newRegistration.teamId
+        }, { status: 201 });
     } catch (error) {
         console.error("Registering in Solo Event Error:", error);
         return NextResponse.json(

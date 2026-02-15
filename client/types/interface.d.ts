@@ -108,7 +108,7 @@ export interface EventByIdProps {
 export interface IRegistration {
   eventId: Types.ObjectId;
   isTeam: boolean;
-  teamId: string;
+  teamId?: string;
   owner: Types.ObjectId;
   team: Types.ObjectId[];
   verified: boolean;
