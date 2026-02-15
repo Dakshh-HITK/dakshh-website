@@ -43,6 +43,8 @@ export interface IEvent {
   minMembersPerTeam: number;
   prizePool: number;
   isPaidEvent: boolean;
+  isFoodProvided: boolean;
+  maxFoodServingsPerParticipant: number;
   fees: number;
   registrations: Types.ObjectId[];
   createdAt: Date;
@@ -112,6 +114,11 @@ export interface IRegistration {
   owner: Types.ObjectId;
   team: Types.ObjectId[];
   verified: boolean;
+  checkedIn: boolean;
+  checkedInAt?: Date;
+  checkedInBy?: Types.ObjectId;
+  foodServedCount: number;
+  lastFoodServedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
