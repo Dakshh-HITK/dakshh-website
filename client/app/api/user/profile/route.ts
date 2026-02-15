@@ -4,6 +4,19 @@ import { auth } from "@/auth";
 import connect from "@/lib/mongoose";
 import User from "@/lib/models/User";
 import { profileUpdateSchema } from "@/lib/validations/auth";
+import { buildProfileQrPayload } from "@/lib/qr-token";
+
+type ProfileUser = {
+  username: string;
+  email: string;
+  avatar?: number;
+  amongUsScore?: number;
+  fullName?: string;
+  phoneNumber?: string;
+  college?: string;
+  stream?: string;
+  isProfileComplete?: boolean;
+};
 
 export async function GET() {
   const session = await auth();
@@ -16,17 +29,7 @@ export async function GET() {
 
     const user = await User.findById(session.user.id)
       .select("username email avatar amongUsScore fullName phoneNumber college stream isProfileComplete")
-      .lean() as {
-        username: string;
-        email: string;
-        avatar?: number;
-        amongUsScore?: number;
-        fullName?: string;
-        phoneNumber?: string;
-        college?: string;
-        stream?: string;
-        isProfileComplete?: boolean;
-      } | null;
+      .lean() as ProfileUser | null;
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -42,6 +45,7 @@ export async function GET() {
       college: user.college ?? "",
       stream: user.stream ?? "",
       isProfileComplete: user.isProfileComplete ?? false,
+      qrPayload: buildProfileQrPayload(session.user.id),
     });
   } catch {
     return NextResponse.json(
@@ -90,7 +94,9 @@ export async function PATCH(request: Request) {
     // but here we can just do a second check or fetch-update pattern.
     
     // Let's fetch the current user to merge with updates for isProfileComplete check
-    const currentUser = await User.findById(session.user.id).lean() as any;
+    const currentUser = await User.findById(session.user.id)
+      .select("username email avatar amongUsScore fullName phoneNumber college stream isProfileComplete")
+      .lean() as ProfileUser | null;
     
     const mergedUser = { ...currentUser, ...update };
     
@@ -114,6 +120,7 @@ export async function PATCH(request: Request) {
         college: currentUser?.college ?? "",
         stream: currentUser?.stream ?? "",
         isProfileComplete: currentUser?.isProfileComplete ?? false,
+        qrPayload: buildProfileQrPayload(session.user.id),
       });
     }
 
@@ -136,17 +143,7 @@ export async function PATCH(request: Request) {
       { new: true }
     )
       .select("username email avatar amongUsScore fullName phoneNumber college stream isProfileComplete")
-      .lean() as {
-        username: string;
-        email: string;
-        avatar?: number;
-        amongUsScore?: number;
-        fullName?: string;
-        phoneNumber?: string;
-        college?: string;
-        stream?: string;
-        isProfileComplete?: boolean;
-      } | null;
+      .lean() as ProfileUser | null;
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -162,6 +159,7 @@ export async function PATCH(request: Request) {
       college: user.college ?? "",
       stream: user.stream ?? "",
       isProfileComplete: user.isProfileComplete ?? false,
+      qrPayload: buildProfileQrPayload(session.user.id),
     });
   } catch {
     return NextResponse.json(

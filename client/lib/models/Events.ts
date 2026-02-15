@@ -83,6 +83,17 @@ const eventSchema = new Schema(
       type: Boolean,
       required: true,
     },
+    isFoodProvided: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    maxFoodServingsPerParticipant: {
+      type: Number,
+      required: true,
+      default: 1,
+      min: 1,
+    },
     fees: {
       type: Number,
       default: 0,

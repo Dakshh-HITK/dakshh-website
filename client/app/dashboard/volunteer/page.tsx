@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import HandDrawnCard from "@/app/components/HandDrawnCard";
 import { DotOrbit } from "@paper-design/shaders-react";
@@ -7,11 +6,14 @@ import connect from "@/lib/mongoose";
 import Event from "@/lib/models/Events";
 import { getSessionRoleContext } from "@/lib/server-role-access";
 import { hasRole, resolveDashboardPath } from "@/lib/roles";
+import VolunteerEventsScannerClient from "./VolunteerEventsScannerClient";
 
 interface VolunteerEvent {
   _id: string;
   eventName: string;
   category: string;
+  isFoodProvided: boolean;
+  maxFoodServingsPerParticipant: number;
 }
 
 export default async function VolunteerDashboardPage() {
@@ -31,14 +33,22 @@ export default async function VolunteerDashboardPage() {
 
   await connect();
   const eventDocs = await Event.find({})
-    .select("eventName category")
+    .select("eventName category isFoodProvided maxFoodServingsPerParticipant")
     .sort({ eventName: 1 })
-    .lean<{ _id: unknown; eventName?: string; category?: string }[]>();
+    .lean<{
+      _id: unknown;
+      eventName?: string;
+      category?: string;
+      isFoodProvided?: boolean;
+      maxFoodServingsPerParticipant?: number;
+    }[]>();
 
   const events: VolunteerEvent[] = eventDocs.map((event) => ({
     _id: String(event._id),
     eventName: event.eventName ?? "Untitled Event",
     category: event.category ?? "Uncategorized",
+    isFoodProvided: event.isFoodProvided ?? false,
+    maxFoodServingsPerParticipant: Math.max(1, event.maxFoodServingsPerParticipant ?? 1),
   }));
 
   return (
@@ -62,38 +72,9 @@ export default async function VolunteerDashboardPage() {
         <div className="max-w-4xl mx-auto">
           <HandDrawnCard className="p-6 sm:p-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="hand-drawn-title text-white text-2xl">
-                Event List
-              </h2>
-              <Link
-                href="/dashboard/volunteer/verify-qr"
-                className="hand-drawn-button px-4 py-2 text-sm"
-              >
-                Verify QR
-              </Link>
+              <h2 className="hand-drawn-title text-white text-2xl">Event List</h2>
             </div>
-            {events.length === 0 ? (
-              <p className="text-white/70">No events available yet.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b-2 border-white/30">
-                      <th className="py-2 text-cyan font-semibold">Event</th>
-                      <th className="py-2 text-cyan font-semibold">Category</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {events.map((event) => (
-                      <tr key={event._id} className="border-b border-white/10">
-                        <td className="py-3 text-white">{event.eventName}</td>
-                        <td className="py-3 text-white/80">{event.category}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <VolunteerEventsScannerClient events={events} />
           </HandDrawnCard>
         </div>
       </div>

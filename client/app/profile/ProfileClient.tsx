@@ -18,6 +18,7 @@ interface ProfileData {
   college?: string;
   stream?: string;
   isProfileComplete?: boolean;
+  qrPayload?: string;
 }
 
 export default function ProfileClient({
@@ -29,6 +30,13 @@ export default function ProfileClient({
   initialAvatar: number | null;
   initialEmail: string;
 }) {
+  const tabs = [
+    { id: "details", label: "Details" },
+    { id: "teams", label: "Teams" },
+    { id: "events", label: "Events" },
+    { id: "arcade", label: "Arcade" },
+  ] as const;
+
   const [profile, setProfile] = useState<ProfileData>({
     username: initialUsername,
     avatar: initialAvatar ?? 1,
@@ -45,6 +53,7 @@ export default function ProfileClient({
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<ProfileData>>({});
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
   const [gameOpen, setGameOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -67,6 +76,7 @@ export default function ProfileClient({
           college: data.college ?? "",
           stream: data.stream ?? "",
           isProfileComplete: data.isProfileComplete ?? false,
+          qrPayload: data.qrPayload ?? "",
         });
 
         setFormData({
@@ -75,7 +85,7 @@ export default function ProfileClient({
           college: data.college ?? "",
           stream: data.stream ?? "",
         });
-      } catch (e) {
+      } catch {
         // ignore fetch errors for now
       }
     })();
@@ -158,21 +168,54 @@ export default function ProfileClient({
                 : "PROFILE INCOMPLETE"}
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <button
-                type="button"
-                aria-label="Change avatar"
-                onClick={() => setAvatarModalOpen(true)}
-                disabled={loading}
-                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden shrink-0 border-4 border-cyan hover:border-yellow transition-colors ring-2 ring-white/30 hover:scale-105 disabled:opacity-70"
-              >
-                <Image
-                  src={`/${displayAvatar}.png`}
-                  alt="Avatar"
-                  width={112}
-                  height={112}
-                  className="w-full h-full object-cover"
-                />
-              </button>
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0">
+                <div className="w-full h-full rounded-full overflow-hidden border-4 border-cyan transition-colors ring-2 ring-white/30">
+                  <Image
+                    src={`/${displayAvatar}.png`}
+                    alt="Avatar"
+                    width={112}
+                    height={112}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setQrModalOpen(true)}
+                    className="absolute inset-0 sm:pointer-events-none"
+                    aria-label="Show profile QR"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAvatarModalOpen(true)}
+                  disabled={loading}
+                  className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 sm:top-0 sm:right-0 sm:bottom-auto sm:left-auto sm:translate-x-1/4 sm:-translate-y-1/4 z-20 w-10 h-10 rounded-full bg-white text-black border-2 border-black shadow-[0_0_0_2px_rgba(0,0,0,0.35)] hover:bg-cyan transition-colors disabled:opacity-60 flex items-center justify-center"
+                  title="Edit avatar"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-6 h-6"
+                    aria-hidden="true"
+                    fill="currentColor"
+                  >
+                    <path d="M3 17.25V21h3.75l11-11-3.75-3.75-11 11Zm14.71-9.04a1 1 0 0 0 0-1.42l-1.5-1.5a1 1 0 0 0-1.42 0l-1.13 1.13 3.75 3.75 1.3-1.3Z" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQrModalOpen(true)}
+                  className="absolute bottom-0 right-0 translate-y-1/4 translate-x-1/4 z-20 w-10 h-10 rounded-full bg-white text-black border-2 border-black shadow-[0_0_0_2px_rgba(0,0,0,0.35)] hover:bg-yellow transition-colors flex items-center justify-center"
+                  title="Show profile QR"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-6 h-6"
+                    aria-hidden="true"
+                    fill="currentColor"
+                  >
+                    <path d="M3 3h7v7H3V3Zm2 2v3h3V5H5Zm9-2h7v7h-7V3Zm2 2v3h3V5h-3ZM3 14h7v7H3v-7Zm2 2v3h3v-3H5Zm9-2h2v2h-2v-2Zm3 0h4v2h-4v-2Zm-3 3h2v4h-2v-4Zm3 3h4v1h-4v-1Zm2-3h2v2h-2v-2Z" />
+                  </svg>
+                </button>
+              </div>
               <div className="flex flex-col text-center sm:text-left">
                 <h1 className="hand-drawn-title text-white text-4xl! sm:text-4xl mb-2">
                   {profile.username}
@@ -465,6 +508,41 @@ export default function ProfileClient({
         currentAvatar={displayAvatar}
         onSelect={handleAvatarSelect}
       />
+
+      {qrModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4">
+          <HandDrawnCard className="w-full max-w-sm p-6 text-center">
+            <h3 className="hand-drawn-title text-white text-2xl mb-2">
+              Profile QR
+            </h3>
+            <p className="text-white/70 text-sm mb-4">
+              This QR works for all events. Volunteers validate it against the
+              selected event registration list.
+            </p>
+            {profile.qrPayload ? (
+              <div className="flex flex-col items-center gap-3">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(profile.qrPayload)}`}
+                  alt="Profile QR"
+                  className="w-52 h-52 rounded border border-white/20 bg-white p-2"
+                />
+                <p className="text-white/40 text-[10px] break-all">
+                  {profile.qrPayload}
+                </p>
+              </div>
+            ) : (
+              <p className="text-white/50 text-sm">QR is being prepared.</p>
+            )}
+            <button
+              type="button"
+              onClick={() => setQrModalOpen(false)}
+              className="hand-drawn-button mt-4 px-5 py-2 text-sm"
+            >
+              Close
+            </button>
+          </HandDrawnCard>
+        </div>
+      )}
 
       {gameOpen && <AmongUsGame onClose={() => setGameOpen(false)} />}
     </div>
