@@ -129,9 +129,10 @@ export interface IRegistration {
 export interface ITeam {
   eventId: Types.ObjectId;
   teamCode: string;
-  teamCode?: string;
+  teamName?: string;
   teamLeader: Types.ObjectId;
   team: Types.ObjectId[];
+  paymentStatus?: "pending" | "completed" | "failed";
   createdAt: Date;
   updatedAt: Date;
 }

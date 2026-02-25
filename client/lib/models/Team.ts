@@ -31,6 +31,10 @@ const teamSchema = new Schema(
                 ref: "User",
             },
         ],
+        paymentStatus: {
+            type: String,
+            enum: ["pending", "completed", "failed"],
+        },
     },
     { timestamps: true }
 );

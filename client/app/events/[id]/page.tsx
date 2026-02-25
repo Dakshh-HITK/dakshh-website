@@ -174,13 +174,16 @@ const EventPage = () => {
     setRegistering(true);
     let redirecting = false;
 
+    // Route to the paid endpoint for paid team events, free endpoint otherwise
+    const endpoint = event.isPaidEvent
+      ? `/api/registration/team/paid/${id}`
+      : `/api/registration/team/create/${id}`;
+
     try {
-      const registration = await fetch(`/api/registration/team/create/${id}`, {
+      const registration = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          teamName
-        }),
+        body: JSON.stringify({ teamName }),
       });
       const response = await handleRegistrationResponse(registration);
       redirecting = response.redirecting;
