@@ -8,7 +8,7 @@ import connect from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 
 export async function POST(
-    request: Request,
+    req: Request,
     { params }: { params: Promise<{ id: string }> },
 ) {
     try {
@@ -16,6 +16,7 @@ export async function POST(
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+        const { teamName } = await req.json();
 
         await connect();
 
@@ -79,6 +80,7 @@ export async function POST(
         const newTeam = new Team({
             eventId: event._id,
             teamCode: newCode,
+            teamName: teamName || "",
             teamLeader: session.user.id,
             team: [session.user.id],
         });

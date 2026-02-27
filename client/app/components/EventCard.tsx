@@ -280,6 +280,9 @@ export default function EventCard(props: Props) {
       <Link
         href={_id ? `/events/${String(_id)}` : "/events"}
         className="block mt-auto"
+        onClick={() => {
+          sessionStorage.setItem("eventsScrollPosition", window.scrollY.toString());
+        }}
       >
         <button className="hand-drawn-button w-full px-3 py-2 text-sm uppercase">
           Explore

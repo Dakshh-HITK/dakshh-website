@@ -28,7 +28,8 @@ export interface IPoc {
 
 export interface IEvent {
   eventName: string;
-  category: "Software" | "Hardware" | "Entrepreneurship" | "Quiz" | "Gaming", "Design and Prototyping";
+  category: "Software" | "Hardware" | "Entrepreneurship" | "Quiz" | "Gaming";
+  "Design and Prototyping";
   date: string;
   time: string;
   duration: string;
@@ -57,7 +58,13 @@ export interface IEvent {
 export interface EventProps {
   _id: Types.ObjectId;
   eventName: string;
-  category: "Software" | "Hardware" | "Entrepreneurship" | "Quiz" | "Gaming" | "Design and Prototyping";
+  category:
+    | "Software"
+    | "Hardware"
+    | "Entrepreneurship"
+    | "Quiz"
+    | "Gaming"
+    | "Design and Prototyping";
   description: string;
   banner?: string | null;
   clubs: string[];
@@ -74,7 +81,7 @@ const CATEGORIES = [
   "Design and Prototyping",
 ] as const;
 
-type Category = typeof CATEGORIES[number];
+type Category = (typeof CATEGORIES)[number];
 
 export interface PublicEventProps {
   _id: string;
@@ -96,7 +103,13 @@ export interface PublicEventProps {
 export interface EventByIdProps {
   _id: Types.ObjectId;
   eventName: string;
-  category: "Software" | "Hardware" | "Entrepreneurship" | "Quiz" | "Gaming" | "Design and Prototyping";
+  category:
+    | "Software"
+    | "Hardware"
+    | "Entrepreneurship"
+    | "Quiz"
+    | "Gaming"
+    | "Design and Prototyping";
   description: string;
   banner?: string | null;
   rules: string[];
@@ -129,9 +142,10 @@ export interface IRegistration {
 export interface ITeam {
   eventId: Types.ObjectId;
   teamCode: string;
-  teamCode?: string;
+  teamName?: string;
   teamLeader: Types.ObjectId;
   team: Types.ObjectId[];
+  paymentStatus?: "pending" | "completed" | "failed";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -139,19 +153,26 @@ export interface ITeam {
 export interface RegiEventProps {
   _id: string;
   eventName: string;
-  category: "Software" | "Hardware" | "Entrepreneurship" | "Quiz" | "Gaming" | "Design and Prototyping";
+  category:
+    | "Software"
+    | "Hardware"
+    | "Entrepreneurship"
+    | "Quiz"
+    | "Gaming"
+    | "Design and Prototyping";
   banner?: string | null;
   date: string;
   time: string;
   venue: string;
+  minMembersPerTeam?: number;
   maxMembersPerTeam?: number;
-  maxMembersPerTeam?: number;
+  isPaidEvent?: boolean;
 }
 
 export interface Registration {
   _id: string;
-  eventId: RegiEventProps
-  isInTeam: boolean,
+  eventId: RegiEventProps;
+  isInTeam: boolean;
   participant: string;
   verified: boolean;
   createdAt: string;
@@ -161,22 +182,24 @@ export interface Registration {
 
 export interface Team {
   _id: string;
-  eventId: RegiEventProps
+  eventId: RegiEventProps;
   teamLeader:
-  | string
-  | {
-    _id: string;
-    username?: string;
-    fullName?: string;
-  };
+    | string
+    | {
+        _id: string;
+        username?: string;
+        fullName?: string;
+      };
   teamCode: string;
+  teamName?: string;
+  paymentStatus?: "pending" | "completed" | "failed";
   team: (
     | string
     | {
-      _id: string;
-      username?: string;
-      fullName?: string;
-    }
+        _id: string;
+        username?: string;
+        fullName?: string;
+      }
   )[];
   members?: {
     _id: string;
@@ -194,7 +217,7 @@ export interface PopulatedTeamUser {
   _id: mongoose.Types.ObjectId;
   username?: string;
   fullName?: string;
-};
+}
 
 export interface RegistrationLean {
   _id: mongoose.Types.ObjectId;
@@ -202,22 +225,27 @@ export interface RegistrationLean {
   teamId?: mongoose.Types.ObjectId;
   verified?: boolean;
   createdAt?: Date;
-};
+}
 
 export interface TeamLean {
   _id: mongoose.Types.ObjectId;
   teamCode: string;
+  teamName?: string;
   teamLeader?: PopulatedTeamUser;
   team?: PopulatedTeamUser[];
+  paymentStatus?: "pending" | "completed" | "failed";
   createdAt: Date;
   updatedAt: Date;
-};
+}
 
 export interface MyTeamResponse {
   _id: string;
   teamCode: string;
+  teamName?: string;
+  paymentStatus?: "pending" | "completed" | "failed";
   createdAt: Date;
   updatedAt: Date;
+  isTeamLeader?: boolean;
   members: {
     _id: string;
     username: string;
@@ -225,21 +253,24 @@ export interface MyTeamResponse {
     isLeader: boolean;
   }[];
   teamSize: number;
-};
+}
 
 export interface TeamMember {
   _id: string;
   username?: string;
   fullName?: string;
   isLeader?: boolean;
-};
+}
 
 export interface TeamDetails {
   _id: string;
   teamCode: string;
+  teamName?: string;
   teamSize: number;
+  isTeamLeader?: boolean;
+  paymentStatus?: "pending" | "completed" | "failed";
   members: TeamMember[];
-};
+}
 
 export interface EventDetails {
   _id: string;
@@ -266,9 +297,10 @@ export interface EventDetails {
     isRegistered: boolean;
     isInTeam: boolean;
     verified: boolean;
+    registrationId?: string | null;
   };
   myTeam?: TeamDetails | null;
-};
+}
 
 export interface ProfileData {
   username: string;

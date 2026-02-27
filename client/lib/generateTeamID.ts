@@ -5,9 +5,9 @@ import crypto from "crypto";
  */
 const generateCode = (): string => {
     const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // No ambiguous chars
-    const bytes = crypto.randomBytes(6);
+    const bytes = crypto.randomBytes(10);
     let result = "";
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 10; i++) {
         result += chars.charAt(bytes[i] % chars.length);
     }
     return result;

@@ -35,6 +35,12 @@ export async function POST(
         if (!event) {
             return NextResponse.json({ error: "Event no longer exists" }, { status: 400 });
         }
+        if (event.registrations.length >= event.teamLimit!) {
+            return NextResponse.json(
+                { error: "Registration limit reached for this event" },
+                { status: 400 }
+            );
+        }
         if (!event.isActive) {
             return NextResponse.json({ error: "This event is not accepting registrations right now" }, { status: 400 });
         }

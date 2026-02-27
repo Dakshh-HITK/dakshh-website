@@ -19,7 +19,7 @@ export async function GET() {
                 { team: session.user.id }
             ]
         })
-            .populate("eventId", "eventName category date time venue banner minMembersPerTeam maxMembersPerTeam")
+            .populate("eventId", "eventName category date time venue banner minMembersPerTeam maxMembersPerTeam isPaidEvent")
             .populate("teamLeader", "username fullName")
             .populate("team", "username fullName")
             .lean();

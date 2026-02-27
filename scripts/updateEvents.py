@@ -22,27 +22,26 @@ events = [
     {"eventName": "TechTussle", "teamLimit": MAX_SAFE_INTEGER},
     {"eventName": "HydroLaunch", "teamLimit": MAX_SAFE_INTEGER},
     {"eventName": "Robo Dangal", "teamLimit": MAX_SAFE_INTEGER},
-    {"eventName": "Robo War", "teamLimit": MAX_SAFE_INTEGER},
-    {"eventName": "Robo Race", "teamLimit": MAX_SAFE_INTEGER},
-    {"eventName": "Robo Soccer", "teamLimit": MAX_SAFE_INTEGER},
-    {"eventName": "Solve the Maze", "teamLimit": MAX_SAFE_INTEGER},
-    {"eventName": "Circuitrix", "teamLimit": MAX_SAFE_INTEGER},
+    {"eventName": "Robo War", "teamLimit": 20}, #ok
+    {"eventName": "Robo Race", "teamLimit": 20}, #ok
+    {"eventName": "Solve the Maze", "teamLimit": 35}, #ok
+    {"eventName": "Circuitrix", "teamLimit": 45}, #ok
     {"eventName": "VALORANT", "teamLimit": MAX_SAFE_INTEGER},
     {"eventName": "BGMI", "teamLimit": MAX_SAFE_INTEGER},
     {"eventName": "Hack Among Us", "teamLimit": 60},
-    {"eventName": "Model Forge", "teamLimit": 20},
+    {"eventName": "ModelForge", "teamLimit": 20},
     {"eventName": "Skeld Sprint", "teamLimit": 60},
-    {"eventName": "Modelworks (Solidworks)", "teamLimit": 60},
-    {"eventName": "Quiz Tank", "teamLimit": 60},
+    {"eventName": "Modelworks", "teamLimit": 60},
+    {"eventName": "Quiz Tank", "teamLimit": 65},
     {"eventName": "Startup Expo", "teamLimit": 80},
-    {"eventName": "Loadrix", "teamLimit": 35},
-    {"eventName": "CADventure", "teamLimit": 50},
-    {"eventName": "novaTechX", "teamLimit": 30},
+    {"eventName": "Loadrix", "teamLimit": 40},
+    {"eventName": "CADventure", "teamLimit": 55},
+    {"eventName": "novaTechX", "teamLimit": 35},
     {"eventName": "Sci-Charades", "teamLimit": MAX_SAFE_INTEGER},
     {"eventName": "Vibe-A-Thon", "teamLimit": 80},
-    {"eventName": "Mélange", "teamLimit": 60},
-    {"eventName": "AI Protosprint", "teamLimit": 60},
-    {"eventName": "Capture The Flag", "teamLimit": MAX_SAFE_INTEGER},
+    {"eventName": "Mélange", "teamLimit": 65}, #ok
+    {"eventName": "AI Protosprint", "teamLimit": 65}, #ok
+    {"eventName": "Capture The Flag", "teamLimit": MAX_SAFE_INTEGER}, #ok
 ]
 
 # -------------------------------

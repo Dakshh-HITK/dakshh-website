@@ -1,5 +1,5 @@
 export const images = {
-    Dakshh_Logo: "https://res.cloudinary.com/dc23g63i8/image/upload/v1771568227/Dakshh_Logo_bh3g8q.png",
-    Heritage: "https://res.cloudinary.com/dc23g63i8/image/upload/v1771568217/Heritage_p5ccwf.png",
-    IIC: "https://res.cloudinary.com/dc23g63i8/image/upload/v1771568215/IIC_ezlhaf.png"
+    Dakshh_Logo: "https://res.cloudinary.com/dy9zoqocw/image/upload/v1772200704/Dakshh_Logo_zcowqo.png",
+    Heritage: "https://res.cloudinary.com/dy9zoqocw/image/upload/v1772200699/Heritage_Logo_g4coop.png",
+    IIC: "https://res.cloudinary.com/dy9zoqocw/image/upload/v1772200696/IIC_Logo_eu2pzg.png"
 }
