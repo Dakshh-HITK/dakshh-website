@@ -9,7 +9,7 @@ load_dotenv()
 MONGODB_URI = os.getenv("MONGODB_URI")
 DB_NAME = os.getenv("DB_NAME")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
-FILE_PATH = "test.xlsx"
+FILE_PATH = "event.xlsx"
 
 VALID_CATEGORIES = [
     "Software",
