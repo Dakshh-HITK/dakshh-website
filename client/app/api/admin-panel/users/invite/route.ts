@@ -9,7 +9,7 @@ import {
 } from "@/lib/models/AdminUser";
 
 function isValidRole(r: unknown): r is AdminRole {
-  return r === "admin" || r === "crewmate" || r === "imposter";
+  return r === "admin" || r === "crewmate" || r === "imposter" || r === "camsguy";
 }
 
 function isValidPermissions(p: unknown): ImposterPermission[] {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     if (!isValidRole(role)) {
       return NextResponse.json(
-        { error: "Invalid role. Use admin, crewmate, or imposter." },
+        { error: "Invalid role. Use admin, crewmate, imposter, or camsguy." },
         { status: 400 }
       );
     }

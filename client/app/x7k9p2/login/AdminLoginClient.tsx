@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { DotOrbit } from "@paper-design/shaders-react";
 import HandDrawnCard from "@/app/components/HandDrawnCard";
 import { getAdminBasePath } from "@/lib/admin-config";
+import { Eye, EyeOff } from "lucide-react";
 
 const OTP_DEVICE_ID_KEY = "admin_otp_device_id";
 
@@ -30,6 +31,7 @@ export default function AdminLoginClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsSetup, setNeedsSetup] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const basePath = getAdminBasePath();
 
@@ -248,15 +250,24 @@ export default function AdminLoginClient() {
                   <label className="block text-cyan text-sm font-semibold mb-1">
                     Password
                   </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="hand-drawn-input w-full"
-                    placeholder="••••••••"
-                    required
-                    autoComplete="current-password"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="hand-drawn-input w-full pr-10"
+                      placeholder="password"
+                      required
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-cyan transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit"
@@ -284,16 +295,25 @@ export default function AdminLoginClient() {
                   <label className="block text-cyan text-sm font-semibold mb-1">
                     Password
                   </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="hand-drawn-input w-full"
-                    placeholder="Min 8 characters"
-                    required
-                    minLength={8}
-                    autoComplete="new-password"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="hand-drawn-input w-full pr-10"
+                      placeholder="Min 8 characters"
+                      required
+                      minLength={8}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-cyan transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit"

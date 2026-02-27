@@ -11,6 +11,7 @@ function canAccessEvents(
   if (!session) return false;
   if (session.isMaster || session.role === "master") return true;
   if (session.role === "admin") return true;
+  if (session.role === "camsguy") return true;
   if (session.role === "imposter")
     return session.permissions.includes("events");
   return false;
@@ -23,7 +24,7 @@ export default async function AdminEventsPage() {
 
   if (!canAccessEvents(session)) redirect(`/${basePath}/dashboard`);
 
-  const canWrite = canAccessEvents(session);
+  const canWrite = session !== null && session.role !== "camsguy" && canAccessEvents(session);
 
   return (
     <>

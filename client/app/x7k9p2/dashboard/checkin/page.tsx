@@ -21,6 +21,7 @@ function canCheckIn(
   if (!session) return false;
   if (session.isMaster || session.role === "master") return true;
   if (session.role === "admin" || session.role === "crewmate") return true;
+  if (session.role === "camsguy") return true;
   if (session.role === "imposter")
     return session.permissions.includes("checkin");
   return false;
@@ -80,7 +81,7 @@ export default async function AdminCheckInPage() {
                 Event Check-in
               </h2>
             </div>
-            <AdminCheckInClient events={events} />
+            <AdminCheckInClient events={events} readonly={session?.role === "camsguy"} />
           </HandDrawnCard>
         </div>
       </div>

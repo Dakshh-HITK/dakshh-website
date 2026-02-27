@@ -19,7 +19,7 @@ interface AdminUserRow {
   createdAt: string;
 }
 
-export default function AdminUsersClient() {
+export default function AdminUsersClient({ canWrite = true }: { canWrite?: boolean }) {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -170,76 +170,79 @@ export default function AdminUsersClient() {
 
   return (
     <>
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-2xl mb-3">
-          Invite User
-        </h2>
-        <form onSubmit={handleInvite} className="space-y-4">
-          <div>
-            <label className="block text-cyan text-sm font-semibold mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              className="hand-drawn-input w-full"
-              placeholder="admin@example.com"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-cyan text-sm font-semibold mb-1">
-              Role
-            </label>
-            <select
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value as AdminRole)}
-              className="bg-black/30 border-2 border-white/30 rounded px-3 py-2 text-white w-full"
-            >
-              <option value="admin">Admin</option>
-              <option value="crewmate">Crewmate</option>
-              <option value="imposter">Imposter</option>
-            </select>
-          </div>
-          {inviteRole === "imposter" && (
+      {canWrite && (
+        <HandDrawnCard className="p-6 sm:p-8">
+          <h2 className="hand-drawn-title text-white text-2xl mb-3">
+            Invite User
+          </h2>
+          <form onSubmit={handleInvite} className="space-y-4">
             <div>
-              <label className="block text-cyan text-sm font-semibold mb-2">
-                Permissions
+              <label className="block text-cyan text-sm font-semibold mb-1">
+                Email
               </label>
-              <div className="flex flex-wrap gap-2">
-                {IMPOSTER_PERMISSIONS.map((p) => (
-                  <label
-                    key={p}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={invitePermissions.includes(p)}
-                      onChange={() =>
-                        togglePermission(
-                          invitePermissions,
-                          p,
-                          setInvitePermissions
-                        )
-                      }
-                      className="rounded"
-                    />
-                    <span className="text-white text-sm capitalize">{p}</span>
-                  </label>
-                ))}
-              </div>
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                className="hand-drawn-input w-full"
+                placeholder="admin@example.com"
+                required
+              />
             </div>
-          )}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="hand-drawn-button py-2 px-4 disabled:opacity-60"
-          >
-            {submitting ? "Inviting..." : "Invite"}
-          </button>
-        </form>
-      </HandDrawnCard>
+            <div>
+              <label className="block text-cyan text-sm font-semibold mb-1">
+                Role
+              </label>
+              <select
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value as AdminRole)}
+                className="hand-drawn-select"
+              >
+                <option value="admin">Admin</option>
+                <option value="crewmate">Crewmate</option>
+                <option value="imposter">Imposter</option>
+                <option value="camsguy">CamsGuy</option>
+              </select>
+            </div>
+            {inviteRole === "imposter" && (
+              <div>
+                <label className="block text-cyan text-sm font-semibold mb-2">
+                  Permissions
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {IMPOSTER_PERMISSIONS.map((p) => (
+                    <label
+                      key={p}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={invitePermissions.includes(p)}
+                        onChange={() =>
+                          togglePermission(
+                            invitePermissions,
+                            p,
+                            setInvitePermissions
+                          )
+                        }
+                        className="rounded"
+                      />
+                      <span className="text-white text-sm capitalize">{p}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="hand-drawn-button py-2 px-4 disabled:opacity-60"
+            >
+              {submitting ? "Inviting..." : "Invite"}
+            </button>
+          </form>
+        </HandDrawnCard>
+      )}
 
       <HandDrawnCard className="p-6 sm:p-8">
         <h2 className="hand-drawn-title text-white text-2xl mb-4">
@@ -265,6 +268,9 @@ export default function AdminUsersClient() {
             <div className="text-cyan font-semibold">
               Imposters: <span className="text-white">{users.filter((u) => u.role === "imposter").length}</span>
             </div>
+            <div className="text-cyan font-semibold">
+              CamsGuys: <span className="text-white">{users.filter((u) => u.role === "camsguy").length}</span>
+            </div>
           </div>
         )}
         {loading ? (
@@ -280,7 +286,7 @@ export default function AdminUsersClient() {
                   <SortTh col="role" label="Role" />
                   <SortTh col="permissions" label="Permissions" />
                   <SortTh col="status" label="Status" />
-                  <th className="py-2 text-cyan font-semibold">Actions</th>
+                  {canWrite && <th className="py-2 text-cyan font-semibold">Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -294,11 +300,12 @@ export default function AdminUsersClient() {
                           onChange={(e) =>
                             setEditRole(e.target.value as AdminRole)
                           }
-                          className="bg-black/30 border border-white/30 rounded px-2 py-1 text-white text-sm"
+                          className="hand-drawn-select py-1"
                         >
                           <option value="admin">Admin</option>
                           <option value="crewmate">Crewmate</option>
                           <option value="imposter">Imposter</option>
+                          <option value="camsguy">CamsGuy</option>
                         </select>
                       ) : (
                         u.role
@@ -335,50 +342,52 @@ export default function AdminUsersClient() {
                     <td className="py-2 pr-3 text-white/70">
                       {u.hasPassword ? "Active" : "Pending setup"}
                     </td>
-                    <td className="py-2">
-                      {editingId === u.id ? (
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleUpdate(u.id)}
-                            disabled={submitting}
-                            className="hand-drawn-button py-1 px-2 text-sm disabled:opacity-60"
-                          >
-                            Save
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setEditingId(null)}
-                            className="py-1 px-2 text-white/70 text-sm hover:text-white"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingId(u.id);
-                              setEditRole(u.role);
-                              setEditPermissions(u.permissions);
-                            }}
-                            className="hand-drawn-button py-1 px-2 text-sm"
-                            style={{ background: "rgba(0, 0, 0, 0.7)" }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(u.id, u.email)}
-                            disabled={submitting}
-                            className="py-1 px-2 text-red-400 text-sm hover:text-red-300 disabled:opacity-60"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      )}
-                    </td>
+                    {canWrite && (
+                      <td className="py-2">
+                        {editingId === u.id ? (
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleUpdate(u.id)}
+                              disabled={submitting}
+                              className="hand-drawn-button py-1 px-2 text-sm disabled:opacity-60"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingId(null)}
+                              className="py-1 px-2 text-white/70 text-sm hover:text-white"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingId(u.id);
+                                setEditRole(u.role);
+                                setEditPermissions(u.permissions);
+                              }}
+                              className="hand-drawn-button py-1 px-2 text-sm"
+                              style={{ background: "rgba(0, 0, 0, 0.7)" }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(u.id, u.email)}
+                              disabled={submitting}
+                              className="py-1 px-2 text-red-400 text-sm hover:text-red-300 disabled:opacity-60"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

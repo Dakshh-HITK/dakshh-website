@@ -17,6 +17,18 @@ function canAccessEvents(
   if (!session) return false;
   if (session.isMaster || session.role === "master") return true;
   if (session.role === "admin") return true;
+  if (session.role === "camsguy") return true;
+  if (session.role === "imposter")
+    return session.permissions.includes("events");
+  return false;
+}
+
+function canWriteEvents(
+  session: { role: string; permissions: string[]; isMaster?: boolean } | null
+): boolean {
+  if (!session) return false;
+  if (session.isMaster || session.role === "master") return true;
+  if (session.role === "admin") return true;
   if (session.role === "imposter")
     return session.permissions.includes("events");
   return false;
@@ -102,7 +114,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await getAdminSession();
-  if (!session || !canAccessEvents(session)) {
+  if (!session || !canWriteEvents(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

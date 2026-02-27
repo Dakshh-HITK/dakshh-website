@@ -11,6 +11,7 @@ function canAccessRegistrations(
   if (!session) return false;
   if (session.isMaster || session.role === "master") return true;
   if (session.role === "admin") return true;
+  if (session.role === "camsguy") return true;
   if (session.role === "imposter")
     return session.permissions.includes("registrations");
   return false;
@@ -23,7 +24,7 @@ export default async function AdminRegistrationsPage() {
 
   if (!canAccessRegistrations(session)) redirect(`/${basePath}/dashboard`);
 
-  const canWrite = canAccessRegistrations(session);
+  const canWrite = session !== null && session.role !== "camsguy" && canAccessRegistrations(session);
 
   return (
     <>

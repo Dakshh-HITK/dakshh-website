@@ -92,7 +92,7 @@ function EventFormFields({
           <select
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
-            className="bg-black/30 border-2 border-white/30 rounded px-3 py-2 text-white w-full"
+            className="hand-drawn-select"
           >
             {EVENT_CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>

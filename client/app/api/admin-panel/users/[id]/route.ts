@@ -9,7 +9,7 @@ import {
 } from "@/lib/models/AdminUser";
 
 function isValidRole(r: unknown): r is AdminRole {
-  return r === "admin" || r === "crewmate" || r === "imposter";
+  return r === "admin" || r === "crewmate" || r === "imposter" || r === "camsguy";
 }
 
 function isValidPermissions(p: unknown): ImposterPermission[] {

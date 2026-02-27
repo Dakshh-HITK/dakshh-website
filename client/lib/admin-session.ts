@@ -17,7 +17,7 @@ function getSecret(): string {
 export interface AdminSessionPayload {
   id: string;
   email: string;
-  role: "admin" | "crewmate" | "imposter" | "master";
+  role: "admin" | "crewmate" | "imposter" | "camsguy" | "master";
   permissions: ImposterPermission[];
   exp: number;
   isMaster?: boolean;

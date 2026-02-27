@@ -162,7 +162,7 @@ export default function AdminRegistrationsClient({
             <select
               value={eventFilter}
               onChange={(e) => setEventFilter(e.target.value)}
-              className="bg-black/30 border-2 border-white/30 rounded px-3 py-2 text-white"
+              className="hand-drawn-select"
             >
               <option value="">All events</option>
               {events.map((e) => (
@@ -179,7 +179,7 @@ export default function AdminRegistrationsClient({
             <select
               value={verifiedFilter}
               onChange={(e) => setVerifiedFilter(e.target.value)}
-              className="bg-black/30 border-2 border-white/30 rounded px-3 py-2 text-white"
+              className="hand-drawn-select"
             >
               <option value="">All</option>
               <option value="true">Yes</option>
@@ -193,7 +193,7 @@ export default function AdminRegistrationsClient({
             <select
               value={checkedInFilter}
               onChange={(e) => setCheckedInFilter(e.target.value)}
-              className="bg-black/30 border-2 border-white/30 rounded px-3 py-2 text-white"
+              className="hand-drawn-select"
             >
               <option value="">All</option>
               <option value="true">Yes</option>

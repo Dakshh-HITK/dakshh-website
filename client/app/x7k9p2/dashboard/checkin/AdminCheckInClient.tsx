@@ -20,8 +20,10 @@ interface CheckResult {
 
 export default function AdminCheckInClient({
   events,
+  readonly = false,
 }: {
   events: VolunteerEvent[];
+  readonly?: boolean;
 }) {
   const RESUME_SCAN_DELAY_MS = 1400;
 
@@ -337,7 +339,9 @@ export default function AdminCheckInClient({
             <th className="py-2 text-cyan font-semibold">Event</th>
             <th className="py-2 text-cyan font-semibold">Category</th>
             <th className="py-2 text-cyan font-semibold">Food</th>
-            <th className="py-2 text-cyan font-semibold text-right">Actions</th>
+            {!readonly && (
+              <th className="py-2 text-cyan font-semibold text-right">Actions</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -352,16 +356,18 @@ export default function AdminCheckInClient({
                     ? `Enabled (${event.maxFoodServingsPerParticipant}x per participant)`
                     : "Not provided"}
                 </td>
-                <td className="py-3 text-right">
-                  <button
-                    type="button"
-                    disabled={processing}
-                    onClick={() => void startCameraScan(event._id)}
-                    className="hand-drawn-button px-3 py-1 text-xs disabled:opacity-50"
-                  >
-                    {isCurrentEvent && dialogOpen ? "Scanner Open" : "Scan QR"}
-                  </button>
-                </td>
+                {!readonly && (
+                  <td className="py-3 text-right">
+                    <button
+                      type="button"
+                      disabled={processing}
+                      onClick={() => void startCameraScan(event._id)}
+                      className="hand-drawn-button px-3 py-1 text-xs disabled:opacity-50"
+                    >
+                      {isCurrentEvent && dialogOpen ? "Scanner Open" : "Scan QR"}
+                    </button>
+                  </td>
+                )}
               </tr>
             );
           })}

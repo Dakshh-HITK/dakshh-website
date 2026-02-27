@@ -12,6 +12,7 @@ function hasPermission(
   if (session.isMaster || session.role === "master") return true;
   if (session.role === "admin") return true;
   if (session.role === "crewmate") return permission === "checkin";
+  if (session.role === "camsguy") return true;
   if (session.role === "imposter")
     return session.permissions.includes(permission as "checkin" | "registrations" | "events" | "users");
   return false;
@@ -19,6 +20,10 @@ function hasPermission(
 
 function canManageUsers(session: AdminSessionPayload): boolean {
   return !!session.isMaster || session.role === "master" || session.role === "admin";
+}
+
+function canViewUsers(session: AdminSessionPayload): boolean {
+  return canManageUsers(session) || session.role === "camsguy";
 }
 
 export default function AdminDashboardNav({
@@ -32,7 +37,7 @@ export default function AdminDashboardNav({
 
   const navItems: { href: string; label: string; show: boolean }[] = [
     { href: base, label: "Home", show: true },
-    { href: `${base}/users`, label: "Users", show: canManageUsers(session) },
+    { href: `${base}/users`, label: "Users", show: canViewUsers(session) },
     {
       href: `${base}/checkin`,
       label: "Check-in",

@@ -10,9 +10,12 @@ export default async function AdminUsersPage() {
   const basePath = getAdminBasePath();
   if (!session) redirect(`/${basePath}`);
 
-  const canManage =
-    session.isMaster || session.role === "master" || session.role === "admin";
-  if (!canManage) redirect(`/${basePath}/dashboard`);
+  const canView =
+    session.isMaster || session.role === "master" || session.role === "admin" || session.role === "camsguy";
+  if (!canView) redirect(`/${basePath}/dashboard`);
+
+  const canWrite =
+    !!session.isMaster || session.role === "master" || session.role === "admin";
 
   return (
     <>
@@ -37,10 +40,12 @@ export default async function AdminUsersPage() {
               User Management
             </h1>
             <p className="text-cyan text-sm">
-              Invite and manage admin users. Assign roles and imposter permissions.
+              {canWrite
+                ? "Invite and manage admin users. Assign roles and imposter permissions."
+                : "View admin users (read-only)."}
             </p>
           </HandDrawnCard>
-          <AdminUsersClient />
+          <AdminUsersClient canWrite={canWrite} />
         </div>
       </div>
     </>
