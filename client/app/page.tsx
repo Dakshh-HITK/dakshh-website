@@ -5,6 +5,7 @@ import StatsSection from './components/StatsSection';
 // import EventsGrid from './components/EventsGrid';
 import SponsorsSection from './components/SponsorsSection';
 import Footer from './components/Footer';
+import AnnouncementsSection from './components/AnnouncementsSection';
 import SpaceLoader from './components/SpaceLoader';
 import Crewmates from './components/Crewmates';
 
@@ -31,6 +32,9 @@ export default function Home() {
         <Crewmates />
         <div id="home" className="relative z-10 pt-10">
           <Hero />
+        </div>
+        <div id="announcements" className="relative z-10">
+          <AnnouncementsSection />
         </div>
         <div id="stats" className="relative z-10">
           <StatsSection />
