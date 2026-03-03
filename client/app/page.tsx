@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import StatsSection from './components/StatsSection';
 // import EventsGrid from './components/EventsGrid';
 import SponsorsSection from './components/SponsorsSection';
+import PartnersSection from './components/PartnersSection';
 import Footer from './components/Footer';
 // import AnnouncementsSection from './components/AnnouncementsSection';
 import SpaceLoader from './components/SpaceLoader';
@@ -44,6 +45,9 @@ export default function Home() {
         </div> */}
         <div id="sponsors" className="relative z-10">
           <SponsorsSection />
+        </div>
+        <div id="partners" className="relative z-10">
+          <PartnersSection />
         </div>
         <div id="contact" className="relative z-10">
           <Footer />
