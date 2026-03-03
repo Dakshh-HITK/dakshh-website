@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connect from "@/lib/mongoose";
 import AdminUser from "@/lib/models/AdminUser";
 import { getAdminSession } from "@/lib/admin-session";
+import { sendAdminInviteEmail } from "@/lib/auth-mail";
 import {
   IMPOSTER_PERMISSIONS,
   type AdminRole,
@@ -67,6 +68,14 @@ export async function POST(request: Request) {
       permissions: role === "imposter" ? validPermissions : [],
       invitedBy: inviter,
     });
+
+    // Send invitation email (fire-and-forget)
+    const siteUrl = (process.env.SITE_URL ?? "https://www.dakshh-hitk.com").replace(/\/+$/, "");
+    const adminPath = (process.env.NEXT_PUBLIC_ADMIN_BASE_PATH ?? process.env.ADMIN_BASE_PATH ?? "x7k9p2").replace(/^\//, "");
+    const loginUrl = `${siteUrl}/${adminPath}/login`;
+    sendAdminInviteEmail(email, role, loginUrl).catch((err) =>
+      console.error("[invite] email_send_failed", { email, err })
+    );
 
     return NextResponse.json({ success: true, email });
   } catch {

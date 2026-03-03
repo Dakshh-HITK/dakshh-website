@@ -9,7 +9,7 @@ load_dotenv()
 MONGODB_URI = os.getenv("MONGODB_URI")
 DB_NAME = os.getenv("DB_NAME")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
-FILE_PATH = "event.xlsx"
+FILE_PATH = "Event Details.xlsx"
 
 VALID_CATEGORIES = [
     "Software",
@@ -124,7 +124,7 @@ def parse_and_upload_events(file_path):
                 "venue": str(row.get("Venue", "")).strip(),
                 "description": str(row.get("Description", "")).strip(),
                 "banner": resolve_banner(row.get("Banner")),
-                "doc": safe_string(row.get("Rulebook Link"), ""),
+                "doc": safe_string(row.get("RuleBook"), ""),
                 "rules": rules_list,
                 "clubs": clubs_list,
                 "isTeamEvent": max_members > 1,
