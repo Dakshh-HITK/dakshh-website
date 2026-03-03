@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import HandDrawnCard from "@/app/components/HandDrawnCard";
 import { CheckCircle2 } from "lucide-react";
 import { EVENT_REGISTRATION_RULES } from "@/constants/global_rules";
+import { EventRegistrationStep } from "@/types/interface";
 
 type GlobalRulesModalProps = {
   isOpen: boolean;
@@ -51,10 +52,8 @@ export default function GlobalRulesModal({
 
   const canConfirm = hasScrolledToEnd && isChecked;
 
-
-
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center px-3 sm:px-6 pt-[72px] pb-6 sm:pb-8">
+    <div className="fixed inset-0 z-50 flex items-start justify-center px-3 sm:px-6 pt-22 pb-6 sm:pb-8">
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={canConfirm ? onClose : undefined}
@@ -71,7 +70,7 @@ export default function GlobalRulesModal({
               boxShadow: "0 4px 24px rgba(255, 70, 85, 0.4)",
             }}
           >
-            <h2 className="text-base sm:text-xl md:text-2xl mb-0! ont-bold text-white uppercase tracking-widest leading-snug">
+            <h2 className="text-lg! md:text-xl! mb-0! font-bold text-white uppercase tracking-widest leading-snug">
               Event Registration Rules
             </h2>
           </div>
@@ -82,7 +81,7 @@ export default function GlobalRulesModal({
             onScroll={handleScroll}
             className="flex-1 overflow-y-auto px-3 sm:px-6 pt-5 pb-4 space-y-4 sm:space-y-6"
           >
-            {EVENT_REGISTRATION_RULES.map((section: any) => (
+            {EVENT_REGISTRATION_RULES.map((section: EventRegistrationStep) => (
               <div
                 key={section.step}
                 className="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-5 space-y-4 hover:border-[#FF4655]/40 transition-all duration-200"
@@ -99,7 +98,7 @@ export default function GlobalRulesModal({
                     {section.step}
                   </div>
 
-                  <h3 className="text-sm sm:text-base md:text-lg font-semibold text-white uppercase tracking-wide leading-tight">
+                  <h3 className="text-sm! sm:text-base! md:text-lg! font-semibold text-white uppercase tracking-wide leading-tight text-left!">
                     {section.title}
                   </h3>
                 </div>
@@ -122,30 +121,33 @@ export default function GlobalRulesModal({
                 {/* CONDITIONS HANDLER */}
                 {section.conditions && (
                   <div className="space-y-3 sm:space-y-4">
-                    {section.conditions.team_creation && (
-                      <ConditionBlock
-                        title="Team Creation Process"
-                        rules={section.conditions.team_creation}
-                      />
+
+                    {/* TEAM ONLY */}
+                    {section.conditions.type === "team" && (
+                      <>
+                        <ConditionBlock
+                          title="Team Creation Process"
+                          rules={section.conditions.team_creation}
+                        />
+
+                        <ConditionBlock
+                          title="Team Joining Process"
+                          rules={section.conditions.team_joining}
+                        />
+                      </>
                     )}
-                    {section.conditions.team_joining && (
-                      <ConditionBlock
-                        title="Team Joining Process"
-                        rules={section.conditions.team_joining}
-                      />
-                    )}
-                    {section.conditions.unpaid && (
-                      <ConditionBlock
-                        title="Unpaid Registration Flow"
-                        rules={section.conditions.unpaid.rules}
-                      />
-                    )}
-                    {section.conditions.paid && (
-                      <ConditionBlock
-                        title="Paid Registration Flow"
-                        rules={section.conditions.paid.rules}
-                      />
-                    )}
+
+                    {/* COMMON PAID / UNPAID */}
+                    <ConditionBlock
+                      title="Unpaid Registration Flow"
+                      rules={section.conditions.unpaid.rules}
+                    />
+
+                    <ConditionBlock
+                      title="Paid Registration Flow"
+                      rules={section.conditions.paid.rules}
+                    />
+
                   </div>
                 )}
               </div>

@@ -59,12 +59,12 @@ export interface EventProps {
   _id: Types.ObjectId;
   eventName: string;
   category:
-    | "Software"
-    | "Hardware"
-    | "Entrepreneurship"
-    | "Quiz"
-    | "Gaming"
-    | "Design and Prototyping";
+  | "Software"
+  | "Hardware"
+  | "Entrepreneurship"
+  | "Quiz"
+  | "Gaming"
+  | "Design and Prototyping";
   description: string;
   banner?: string | null;
   clubs: string[];
@@ -104,12 +104,12 @@ export interface EventByIdProps {
   _id: Types.ObjectId;
   eventName: string;
   category:
-    | "Software"
-    | "Hardware"
-    | "Entrepreneurship"
-    | "Quiz"
-    | "Gaming"
-    | "Design and Prototyping";
+  | "Software"
+  | "Hardware"
+  | "Entrepreneurship"
+  | "Quiz"
+  | "Gaming"
+  | "Design and Prototyping";
   description: string;
   banner?: string | null;
   rules: string[];
@@ -154,12 +154,12 @@ export interface RegiEventProps {
   _id: string;
   eventName: string;
   category:
-    | "Software"
-    | "Hardware"
-    | "Entrepreneurship"
-    | "Quiz"
-    | "Gaming"
-    | "Design and Prototyping";
+  | "Software"
+  | "Hardware"
+  | "Entrepreneurship"
+  | "Quiz"
+  | "Gaming"
+  | "Design and Prototyping";
   banner?: string | null;
   date: string;
   time: string;
@@ -184,22 +184,22 @@ export interface Team {
   _id: string;
   eventId: RegiEventProps;
   teamLeader:
-    | string
-    | {
-        _id: string;
-        username?: string;
-        fullName?: string;
-      };
+  | string
+  | {
+    _id: string;
+    username?: string;
+    fullName?: string;
+  };
   teamCode: string;
   teamName?: string;
   paymentStatus?: "pending" | "completed" | "failed";
   team: (
     | string
     | {
-        _id: string;
-        username?: string;
-        fullName?: string;
-      }
+      _id: string;
+      username?: string;
+      fullName?: string;
+    }
   )[];
   members?: {
     _id: string;
@@ -320,3 +320,62 @@ export interface LeaderBoard {
   amongUsScore: number;
   avatar?: number;
 }
+
+// export interface RuleSet {
+//   rules: string[];
+// }
+
+// export interface PaymentCondition {
+//   unpaid?: RuleSet;
+//   paid?: RuleSet;
+// }
+
+// export interface TeamCondition extends PaymentCondition {
+//   team_creation?: string[];
+//   team_joining?: string[];
+// }
+
+// export interface EventRegistrationStep {
+//   step: number;
+//   title: string;
+//   rules?: string[];
+//   conditions?: PaymentCondition | TeamCondition;
+// }
+
+// export type EventRegistrationRules = EventRegistrationStep[];
+
+// Base rule set
+export interface RuleSet {
+  rules: string[];
+}
+
+/* ------------------ CONDITIONS ------------------ */
+
+// Solo registration condition
+export interface SoloCondition {
+  type: "solo";
+  unpaid: RuleSet;
+  paid: RuleSet;
+}
+
+// Team registration condition
+export interface TeamCondition {
+  type: "team";
+  team_creation: string[];
+  team_joining: string[];
+  unpaid: RuleSet;
+  paid: RuleSet;
+}
+
+export type RegistrationCondition = SoloCondition | TeamCondition;
+
+/* ------------------ STEP STRUCTURE ------------------ */
+
+export interface EventRegistrationStep {
+  step: number;
+  title: string;
+  rules?: string[];
+  conditions?: RegistrationCondition;
+}
+
+export type EventRegistrationRules = EventRegistrationStep[];
