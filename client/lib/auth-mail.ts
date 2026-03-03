@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/email-template";
 import { OtpEmailTemplate } from "@/components/otp-email-template";
+import { AdminInviteEmailTemplate } from "@/components/admin-invite-email-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const onboardingFrom = "Dakshh Team <onboarding@dakshh-hitk.com>";
@@ -29,5 +30,18 @@ export async function sendAdminOtpEmail(to: string, otp: string) {
     to: [to],
     subject: "Admin panel verification code",
     react: OtpEmailTemplate({ otp }),
+  });
+}
+
+export async function sendAdminInviteEmail(
+  to: string,
+  role: string,
+  loginUrl: string
+) {
+  return resend.emails.send({
+    from: onboardingFrom,
+    to: [to],
+    subject: "You've been invited to the Dakshh Admin Panel",
+    react: AdminInviteEmailTemplate({ email: to, role, loginUrl }),
   });
 }

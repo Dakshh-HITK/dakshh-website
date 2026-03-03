@@ -7,9 +7,10 @@ import EventCard from "../components/EventCard";
 import CategoryDropdown, {
   type Category,
 } from "../components/Events/CategoryDropdown";
+import GlobalRulesModal from "../components/Events/modals/GlobalRulesModal";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { Power } from "lucide-react";
+import { Power, ScrollText } from "lucide-react";
 
 type PublicEvent = {
   _id: string;
@@ -42,6 +43,7 @@ export default function Events() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<Category>("All");
   const [showOnlyActive, setShowOnlyActive] = useState<boolean>(false);
+  const [showRulesModal, setShowRulesModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!loading && !displayLoading && events.length > 0) {
@@ -98,6 +100,14 @@ export default function Events() {
 
   useEffect(() => {
     getEvents().then(setEvents);
+  }, []);
+
+  // Show global rules modal on first visit
+  useEffect(() => {
+    if (!localStorage.getItem("events_rules_seen")) {
+      setShowRulesModal(true);
+      localStorage.setItem("events_rules_seen", "true");
+    }
   }, []);
 
   useEffect(() => {
@@ -168,57 +178,83 @@ export default function Events() {
             Browse events and filter by category or search by name.
           </p>
 
-          <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center">
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-white/70">
-                Active Only
-              </span>
-
+          <div className="mb-6">
+            {/* Rules button — top right on sm+ only */}
+            <div className="hidden sm:flex justify-end mb-3">
               <button
-                onClick={() => setShowOnlyActive((prev) => !prev)}
-                className={`relative w-14 h-7 rounded-full transition-all duration-300
-      ${showOnlyActive ? "bg-green-500/30" : "bg-white/10"}
-    `}
+                onClick={() => setShowRulesModal(true)}
+                className="hand-drawn-button px-4! py-2! text-sm! bg-red-600/80 hover:bg-red-600 border-red-400 flex items-center gap-2 whitespace-nowrap"
               >
-                {/* Track Glow */}
-                {showOnlyActive && (
-                  <div className="absolute inset-0 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.6)]" />
-                )}
-
-                {/* Knob */}
-                <div
-                  className={`absolute top-1 left-1 w-5 h-5 rounded-full flex items-center justify-center
-        transition-all duration-300
-        ${showOnlyActive
-                      ? "translate-x-7 bg-green-400 text-black"
-                      : "translate-x-0 bg-white/70 text-black"
-                    }
-      `}
-                >
-                  <Power size={12} />
-                </div>
+                <ScrollText size={16} />
+                View Rules
               </button>
             </div>
 
-            <div className="w-full sm:w-64">
-              <CategoryDropdown
-                value={selectedCategory}
-                onChange={setSelectedCategory}
-              />
-            </div>
+            {/* Filter row — active toggle + category + search */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              {/* Active Only toggle + Rules button on mobile (side by side) */}
+              <div className="flex items-center justify-between sm:justify-start gap-3 shrink-0">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-white/70">
+                    Active Only
+                  </span>
 
-            <div className="w-full sm:flex-1">
-              <label htmlFor="event-search" className="sr-only">
-                Search events
-              </label>
-              <input
-                id="event-search"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search events..."
-                className="hand-drawn-input w-full"
-              />
+                  <button
+                    onClick={() => setShowOnlyActive((prev) => !prev)}
+                    className={`relative w-14 h-7 rounded-full transition-all duration-300
+          ${showOnlyActive ? "bg-green-500/30" : "bg-white/10"}
+        `}
+                  >
+                    {/* Track Glow */}
+                    {showOnlyActive && (
+                      <div className="absolute inset-0 rounded-full shadow-[0_0_12px_rgba(34,197,94,0.6)]" />
+                    )}
+
+                    {/* Knob */}
+                    <div
+                      className={`absolute top-1 left-1 w-5 h-5 rounded-full flex items-center justify-center
+            transition-all duration-300
+            ${showOnlyActive
+                          ? "translate-x-7 bg-green-400 text-black"
+                          : "translate-x-0 bg-white/70 text-black"
+                        }
+          `}
+                    >
+                      <Power size={12} />
+                    </div>
+                  </button>
+                </div>
+
+                {/* Rules button — mobile only, beside the toggle */}
+                <button
+                  onClick={() => setShowRulesModal(true)}
+                  className="sm:hidden hand-drawn-button px-4! py-2! text-sm! bg-red-600/80 hover:bg-red-600 border-red-400 flex items-center gap-2 whitespace-nowrap"
+                >
+                  <ScrollText size={16} />
+                  View Rules
+                </button>
+              </div>
+
+              <div className="w-full sm:w-55 shrink-0 relative z-20 min-w-0">
+                <CategoryDropdown
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                />
+              </div>
+
+              <div className="w-full sm:flex-1 relative z-10 min-w-0">
+                <label htmlFor="event-search" className="sr-only">
+                  Search events
+                </label>
+                <input
+                  id="event-search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search events..."
+                  className="hand-drawn-input w-full block"
+                />
+              </div>
             </div>
           </div>
 
@@ -254,6 +290,11 @@ export default function Events() {
             </div>
           )}
         </div>
+
+        <GlobalRulesModal
+          isOpen={showRulesModal}
+          onClose={() => setShowRulesModal(false)}
+        />
       </div>
     </div>
   );

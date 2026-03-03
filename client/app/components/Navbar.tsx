@@ -247,7 +247,7 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              {session && (
+              {/* {session && (
                 <Link
                   href="/dashboard"
                   className="text-cyan py-2 px-3 text-sm font-semibold hover:text-yellow transition-colors"
@@ -255,7 +255,7 @@ export default function Navbar() {
                 >
                   Dashboard
                 </Link>
-              )}
+              )} */}
               {status === "loading" ? null : session ? (
                 <>
                   <Link

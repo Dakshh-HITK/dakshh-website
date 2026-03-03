@@ -27,7 +27,7 @@ export default function CategoryDropdown({ value, onChange }: Props) {
   const displayValue = value === "All" ? "All Categories" : value;
 
   return (
-    <div ref={ref} className="relative w-full sm:w-64">
+    <div ref={ref} className="relative w-full sm:w-55">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

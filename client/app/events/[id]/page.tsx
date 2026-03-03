@@ -15,6 +15,7 @@ import PocModal from "@/app/components/Events/modals/PocModal";
 import { MessageSquare, ScrollText, FileText } from "lucide-react";
 import { EventDetails } from "@/types/interface";
 import CreateTeamModal from "@/app/components/Events/modals/CreateTeamModal";
+import ConfirmationModal from "@/app/components/Events/modals/ConfirmationModal";
 
 const EventPage = () => {
   const params = useParams();
@@ -44,6 +45,7 @@ const EventPage = () => {
   const [showRules, setShowRules] = useState(false);
   const [showPoc, setShowPoc] = useState(false);
   const [showCreateTeam, setShowCreateTeam] = useState(false);
+  const [showSoloConfirm, setShowSoloConfirm] = useState(false);
   const [completingPayment, setCompletingPayment] = useState(false);
 
   const fetchData = async () => {
@@ -166,6 +168,18 @@ const EventPage = () => {
     } finally {
       if (!redirecting) setRegistering(false);
     }
+  };
+
+  const openSoloConfirmation = () => {
+    if (loading || registering || Boolean(event?.userRegistration?.isRegistered)) {
+      return;
+    }
+    setShowSoloConfirm(true);
+  };
+
+  const confirmSoloRegistration = async () => {
+    setShowSoloConfirm(false);
+    await registerSoloEvent();
   };
 
   const createTeam = async (teamName: string) => {
@@ -612,7 +626,7 @@ const EventPage = () => {
                         registering ||
                         Boolean(event.userRegistration?.isRegistered)
                       }
-                      onClick={registerSoloEvent}
+                      onClick={openSoloConfirmation}
                     >
                       {registering ? (
                         <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
@@ -719,6 +733,17 @@ const EventPage = () => {
           registering={registering}
         />
       )}
+
+      <ConfirmationModal
+        open={showSoloConfirm}
+        onClose={() => setShowSoloConfirm(false)}
+        onConfirm={confirmSoloRegistration}
+        loading={registering}
+        title="Ready for Launch?"
+        message="Are you sure you want to deploy as a crewmate for this mission?"
+        confirmText="Launch Mission"
+        cancelText="Abort Mission"
+      />
     </div>
   );
 };
