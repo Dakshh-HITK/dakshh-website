@@ -1,6 +1,6 @@
 seminars_data = [
     {
-        "title": "Quantum Computing: The Next Frontier",
+        "title": "Anatomy of a Cyber Attack",
         "club": "Robotics Club",
         "speaker": "Subham Bhattacharya",
         "speakerImage": "https://res.cloudinary.com/dnil7l0j1/image/upload/v1772562170/Shubham_iokifq.jpg",
@@ -9,10 +9,10 @@ seminars_data = [
             "He is passionate about Cyber Security, Machine Learning, and Full Stack Development."
         ),
         "description": (
-            "Explore the fascinating world of quantum computing and its potential to revolutionize modern technology. "
-            "This session will introduce core concepts of quantum computation."
+            "Explore how a cyber attack unfolds—from reconnaissance and intrusion to exploitation and impact. "
+            "This session breaks down real-world tactics used by attackers and highlights key defense strategies to detect, prevent, and respond to threats."
         ),
-        "speakerNote": "Bring your curiosity and questions about emerging technologies and the quantum realm!",
+        "speakerNote": "Bring your curiosity and a hacker's mindset as we dissect how real-world cyber attacks unfold and how defenses stand their ground.",
         "date": "07/03/26",
         "time": "07:00 PM - 09:00 PM",
         "mode": "online",
