@@ -321,44 +321,16 @@ export interface LeaderBoard {
   avatar?: number;
 }
 
-// export interface RuleSet {
-//   rules: string[];
-// }
-
-// export interface PaymentCondition {
-//   unpaid?: RuleSet;
-//   paid?: RuleSet;
-// }
-
-// export interface TeamCondition extends PaymentCondition {
-//   team_creation?: string[];
-//   team_joining?: string[];
-// }
-
-// export interface EventRegistrationStep {
-//   step: number;
-//   title: string;
-//   rules?: string[];
-//   conditions?: PaymentCondition | TeamCondition;
-// }
-
-// export type EventRegistrationRules = EventRegistrationStep[];
-
-// Base rule set
 export interface RuleSet {
   rules: string[];
 }
 
-/* ------------------ CONDITIONS ------------------ */
-
-// Solo registration condition
 export interface SoloCondition {
   type: "solo";
   unpaid: RuleSet;
   paid: RuleSet;
 }
 
-// Team registration condition
 export interface TeamCondition {
   type: "team";
   team_creation: string[];
@@ -369,8 +341,6 @@ export interface TeamCondition {
 
 export type RegistrationCondition = SoloCondition | TeamCondition;
 
-/* ------------------ STEP STRUCTURE ------------------ */
-
 export interface EventRegistrationStep {
   step: number;
   title: string;
@@ -379,3 +349,11 @@ export interface EventRegistrationStep {
 }
 
 export type EventRegistrationRules = EventRegistrationStep[];
+
+export interface Partner {
+  id: string;
+  partner_name: string;
+  partner_type: string;
+  logo_url: string;
+  website_url?: string;
+}
