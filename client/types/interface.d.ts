@@ -357,3 +357,28 @@ export interface Partner {
   logo_url: string;
   website_url?: string;
 }
+
+interface HandCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface SeminarData {
+  _id: string;
+  title: string;
+  speaker: string;
+  speakerImage: string;
+  speakerBio: string;
+  description: string;
+  speakerNote?: string;
+  date: string;
+  time: string;
+  mode: "online" | "offline";
+  venue?: string;
+  meetLink?: string;
+  maxRegistrations?: number;
+  registrations?: string[];
+  isActive?: boolean;
+  isRegisterationNeeded?: boolean;
+  club?: string;
+}
