@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import { DotOrbit } from "@paper-design/shaders-react";
 import Crewmates from "../components/Crewmates";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface HandCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -148,6 +149,7 @@ function SeminarModal({
 }) {
   const seminarDate = new Date(seminar.dateTime);
   const isPast = seminarDate < new Date();
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -237,13 +239,27 @@ function SeminarModal({
               </div>
             ) : (
               <button
-                onClick={() => register(seminar._id)}
+                onClick={() => {
+                  // register(seminar._id);
+                  setShowConfirmation(true);
+                }}
                 className="inline-block bg-cyan-500 text-white px-6 py-3 rounded-full font-bold uppercase tracking-wider hover:bg-cyan-600 transition-colors"
               >
                 Register Now
               </button>
             )}
           </div>
+        )}
+
+        {showConfirmation && (
+          <RegistrationConfirmationModal
+            onConfirm={async () => {
+              await register(seminar._id);
+
+              setShowConfirmation(false);
+            }}
+            onCancel={() => setShowConfirmation(false)}
+          />
         )}
 
         {!isPast && seminar.isActive && !seminar.isRegisterationNeeded && (
@@ -268,7 +284,88 @@ function SeminarModal({
   );
 }
 
+function RegistrationConfirmationModal({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    await onConfirm();
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl px-4">
+      <HandCard className="relative w-full max-w-md bg-slate-900 border-2 border-green-400 p-8 rounded-2xl animate-scaleIn shadow-[8px_8px_0px_0px_rgba(34,197,94,1)]">
+        <h2 className="text-md font-bold text-green-400 mb-4">
+          Really want to onBoard this{" "}
+          <span className="text-red-500">seminar?</span>
+        </h2>
+        <div className="flex flex-col items-center justify-center gap-6 mt-6">
+          <button
+            onClick={handleConfirm}
+            disabled={loading}
+            className="inline-block bg-green-500 text-white px-6 py-3 rounded-full font-bold uppercase tracking-wider hover:bg-green-600 transition-colors disabled:opacity-50"
+          >
+            {loading ? "Registering..." : "Yes, Register Me!"}
+          </button>
+          <button
+            onClick={() => {
+              onCancel();
+            }}
+            className="ml-4 inline-block bg-red-500 text-white px-6 py-3 rounded-full font-bold uppercase tracking-wider hover:bg-red-600 transition-colors"
+          >
+            No, I am Imposter
+          </button>
+        </div>
+      </HandCard>
+    </div>
+  );
+}
+
+function AlertModal({
+  message,
+  onClose,
+  isError,
+}: {
+  message: string;
+  onClose: () => void;
+  isError: boolean;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl px-4"
+      onClick={onClose}
+    >
+      <HandCard
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-md ${isError ? "bg-slate-900 border-2 border-red-400" : "bg-slate-900 border-2 border-green-400"} p-8 rounded-2xl animate-scaleIn shadow-[8px_8px_0px_0px_rgba(185,28,28,1)]`}
+      >
+        <h2
+          className={`text-md font-bold ${isError ? "text-red-400" : "text-green-400"} mb-4`}
+        >
+          {message}
+        </h2>
+        <div className="flex flex-col items-center justify-center gap-6 mt-6">
+          <button
+            onClick={onClose}
+            className="inline-block bg-red-500 text-white px-6 py-3 rounded-full font-bold uppercase tracking-wider hover:bg-red-600 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </HandCard>
+    </div>
+  );
+}
+
 export default function SeminarsPage() {
+  const router = useRouter();
   const [selectedSeminar, setSelectedSeminar] = useState<SeminarData | null>(
     null,
   );
@@ -277,6 +374,7 @@ export default function SeminarsPage() {
     string[]
   >([]);
   const [seminars, setSeminars] = useState<SeminarData[]>([]);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchSeminars() {
@@ -294,21 +392,29 @@ export default function SeminarsPage() {
     fetchSeminars();
   }, []);
 
-  const register = async (seminarId: string) => {
+  const register = async (seminarId: string): Promise<void> => {
     try {
       const response = await axios.post("/api/seminar/registration", {
         seminarId,
       });
-      alert(response.data.message);
+
       setUserRegisteredSeminars((prev) =>
         prev.includes(seminarId) ? prev : [...prev, seminarId],
       );
+      setAlertMessage(response.data.message || "Successfully onboarded!");
     } catch (error: any) {
-      alert(error.response?.data?.error || "Failed to register for seminar");
+      if (error.response?.status === 401) {
+        setAlertMessage("You are not a crewmate. Please login first.");
+        router.push("/auth?redirect=/seminars");
+      }
+
+      setAlertMessage(
+        error.response?.data?.error || "Failed to register for seminar",
+      );
     }
   };
 
-  const now = new Date();
+  // const now = new Date();
 
   const { upcoming, past } = useMemo(() => {
     const now = new Date();
@@ -329,7 +435,6 @@ export default function SeminarsPage() {
 
     return { upcoming: upcomingSeminars, past: pastSeminars };
   }, [seminars]);
-
 
   if (loading) {
     return (
@@ -425,6 +530,19 @@ export default function SeminarsPage() {
           register={register}
           seminar={selectedSeminar}
           onClose={() => setSelectedSeminar(null)}
+        />
+      )}
+      {alertMessage && (
+        <AlertModal
+          message={alertMessage}
+          onClose={() => {
+            setAlertMessage(null);
+            selectedSeminar && setSelectedSeminar(null);
+          }}
+          isError={
+            alertMessage.toLowerCase().includes("failed") ||
+            alertMessage.toLowerCase().includes("please")
+          }
         />
       )}
     </div>
