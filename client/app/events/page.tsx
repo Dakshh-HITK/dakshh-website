@@ -63,7 +63,7 @@ export default function Events() {
   const filteredEvents = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return events.filter((ev) => {
+    const filtered = events.filter((ev) => {
       const matchesQuery =
         query.length === 0 ? true : ev.eventName.toLowerCase().includes(query);
 
@@ -74,6 +74,15 @@ export default function Events() {
         showOnlyActive ? ev.isActive === true : true;
 
       return matchesQuery && matchesCategory && matchesActive;
+    });
+
+    // Sort: events with "protosprint" in the name (case-insensitive) appear first
+    return [...filtered].sort((a, b) => {
+      const aHasProtosprint = a.eventName.toLowerCase().includes("protosprint");
+      const bHasProtosprint = b.eventName.toLowerCase().includes("protosprint");
+      if (aHasProtosprint && !bHasProtosprint) return -1;
+      if (!aHasProtosprint && bHasProtosprint) return 1;
+      return 0;
     });
   }, [events, searchQuery, selectedCategory, showOnlyActive]);
 
