@@ -53,7 +53,7 @@ export default function EventCard(props: Props) {
 
   const displayTitle = eventName ?? title ?? "Untitled Event";
   // subtle visual priority
-  const isProto = displayTitle.toLowerCase().includes("protosprint") || displayTitle.toLowerCase().includes("vibe-a") || displayTitle.toLowerCase().includes("mé") || displayTitle.toLowerCase().includes("cyber quest") || displayTitle.toLowerCase().includes("modelfor");
+  const isProto = true;
   const displayCategory = category ?? "General";
   const clubList = Array.isArray(clubs)
     ? clubs
