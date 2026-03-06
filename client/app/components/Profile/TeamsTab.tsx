@@ -29,6 +29,7 @@ const TeamsTab = () => {
 	const [newTeamName, setNewTeamName] = useState("");
 	const [updating, setUpdating] = useState(false);
 	const [memberToRemove, setMemberToRemove] = useState<{ teamId: string, memberId: string, name: string } | null>(null);
+	const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchEvents = async () => {
@@ -41,6 +42,7 @@ const TeamsTab = () => {
 
 				if (response.ok) {
 					setTeams(data.teams || []);
+					setCurrentUserId(data.currentUserId || null);
 				}
 			} catch (error) {
 				console.error("Failed to fetch events:", error);
@@ -339,8 +341,9 @@ const TeamsTab = () => {
 															const displayName = member.fullName || member.username || "Unknown";
 															const isThisMemberTheLeader = member.isLeader;
 
-															// Check if the current user viewing this tab is the leader of this team
-															const viewerIsLeader = team.members?.find(m => m.isLeader)?._id === (typeof team.teamLeader === 'string' ? team.teamLeader : team.teamLeader?._id);
+															// Check if the current logged-in user is the leader of this team
+															const leaderMember = team.members?.find(m => m.isLeader);
+															const viewerIsLeader = !!currentUserId && !!leaderMember && leaderMember._id === currentUserId;
 
 															return (
 																<div

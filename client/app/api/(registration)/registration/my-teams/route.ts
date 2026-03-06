@@ -53,7 +53,7 @@ export async function GET() {
             };
         });
 
-        return NextResponse.json({ teams: serializedTeams }, { status: 200 });
+        return NextResponse.json({ teams: serializedTeams, currentUserId: session.user.id }, { status: 200 });
     } catch (error) {
         console.error("Error in Fetching Registered events:", error);
         return NextResponse.json(
