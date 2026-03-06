@@ -11,7 +11,7 @@ export default async function AdminUsersPage() {
   if (!session) redirect(`/${basePath}`);
 
   const canView =
-    session.isMaster || session.role === "master" || session.role === "admin" || session.role === "camsguy";
+    session.isMaster || session.role === "master" || session.role === "admin";
   if (!canView) redirect(`/${basePath}/dashboard`);
 
   const canWrite =

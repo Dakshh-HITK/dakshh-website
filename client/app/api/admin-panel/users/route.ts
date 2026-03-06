@@ -5,7 +5,7 @@ import { getAdminSession } from "@/lib/admin-session";
 
 export async function GET() {
   const session = await getAdminSession();
-  if (!session || (!session.isMaster && session.role !== "master" && session.role !== "admin" && session.role !== "camsguy")) {
+  if (!session || (!session.isMaster && session.role !== "master" && session.role !== "admin")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

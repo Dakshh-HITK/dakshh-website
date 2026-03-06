@@ -25,7 +25,7 @@ function canManageUsers(session: AdminSessionPayload): boolean {
 }
 
 function canViewUsers(session: AdminSessionPayload): boolean {
-  return canManageUsers(session) || session.role === "camsguy";
+  return canManageUsers(session);
 }
 
 export default function AdminDashboardNav({

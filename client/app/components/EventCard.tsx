@@ -79,7 +79,7 @@ export default function EventCard(props: Props) {
       <div className="flex justify-between items-center mb-4">
         {/* Club Name - Left Side */}
         <div className="flex flex-col items-start gap-1.5">
-          <span className="text-xs uppercase text-white/70">{displayClub}</span>
+          <span className="text-xs text-white/70">{displayClub}</span>
           {isActive && (
             <div className="relative flex items-center justify-center">
               <span className="absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75 animate-ping"></span>
