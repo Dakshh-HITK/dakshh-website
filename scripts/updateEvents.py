@@ -28,7 +28,7 @@ events = [
     {"eventName": "Circuitrix", "teamLimit": 45}, #ok
     {"eventName": "VALORANT", "teamLimit": MAX_SAFE_INTEGER},
     {"eventName": "BGMI", "teamLimit": MAX_SAFE_INTEGER},
-    {"eventName": "Hack Among Us", "teamLimit": 60},
+    {"eventName": "Hack Among Us", "teamLimit": 80},
     {"eventName": "ModelForge", "teamLimit": 20},
     {"eventName": "Skeld Sprint", "teamLimit": 60},
     {"eventName": "Modelworks", "teamLimit": 60},

@@ -681,13 +681,13 @@ const EventPage = () => {
                   Organized By
                 </p>
                 <div className="flex flex-col items-center gap-2">
-                  <span className="text-2xl font-bold text-purple-200 uppercase tracking-wide">
+                  <span className="text-2xl font-bold text-purple-200 tracking-wide">
                     {event.clubs[0]}
                   </span>
                   {event.clubs.length > 1 && (
                     <>
                       <span className="text-sm text-gray-500 font-mono">✕</span>
-                      <span className="text-2xl font-bold text-purple-200 uppercase tracking-wide">
+                      <span className="text-2xl font-bold text-purple-200 tracking-wide">
                         {event.clubs[1]}
                       </span>
                     </>
