@@ -4,6 +4,19 @@ import { useEffect, useState, useCallback } from "react";
 import HandDrawnCard from "@/app/components/HandDrawnCard";
 import { useAmongUsToast } from "@/app/components/ui/among-us-toast";
 
+import TeamDetailsModal from "./TeamDetailsModal";
+
+interface TeamMember {
+  id: string;
+  username: string;
+  fullName: string;
+  email: string;
+  college: string;
+  phoneNumber: string;
+  avatar: number | null;
+  isLeader: boolean;
+}
+
 interface RegistrationRow {
   id: string;
   eventId: string;
@@ -11,9 +24,14 @@ interface RegistrationRow {
   isInTeam: boolean;
   teamId: string | null;
   teamCode: string | null;
+  teamName: string | null;
+  teamMembers: TeamMember[];
   participantId: string;
   participantName: string;
   participantEmail: string;
+  participantCollege: string;
+  participantPhone: string;
+  participantAvatar: number | null;
   verified: boolean;
   checkedIn: boolean;
   checkedInAt: string | null;
@@ -48,6 +66,12 @@ export default function AdminRegistrationsClient({
   const [editFoodServedCount, setEditFoodServedCount] = useState(0);
   const [sortKey, setSortKey] = useState<keyof RegistrationRow | "participant" | null>("eventName");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [viewMode, setViewMode] = useState<"list" | "teams">("list");
+  const [selectedTeam, setSelectedTeam] = useState<{
+    teamCode: string;
+    teamName: string | null;
+    members: TeamMember[];
+  } | null>(null);
   const toast = useAmongUsToast();
 
   const handleSort = (key: keyof RegistrationRow | "participant") => {
@@ -148,13 +172,132 @@ export default function AdminRegistrationsClient({
     setEditFoodServedCount(reg.foodServedCount);
   };
 
+  const getTeamStats = () => {
+    const teamsMap: Record<
+      string,
+      {
+        teamCode: string;
+        teamName: string | null;
+        members: RegistrationRow[];
+        eventName: string;
+      }
+    > = {};
+
+    registrations.forEach((reg) => {
+      if (reg.isInTeam && reg.teamCode) {
+        if (!teamsMap[reg.teamCode]) {
+          teamsMap[reg.teamCode] = {
+            teamCode: reg.teamCode,
+            teamName: reg.teamName,
+            eventName: reg.eventName,
+            members: [],
+          };
+        }
+        teamsMap[reg.teamCode].members.push(reg);
+      }
+    });
+
+    return Object.values(teamsMap);
+  };
+
+  const handleTeamClick = (team: { teamCode: string; teamName: string | null; members: RegistrationRow[] }) => {
+    // If first member has teamMembers populated, use that (preferred as it has full user details)
+    const firstMember = team.members[0];
+    if (firstMember && firstMember.teamMembers && firstMember.teamMembers.length > 0) {
+      setSelectedTeam({
+        teamCode: team.teamCode,
+        teamName: team.teamName,
+        members: firstMember.teamMembers
+      });
+      return;
+    }
+
+    // Fallback: use flattened registration rows
+    setSelectedTeam({
+      teamCode: team.teamCode,
+      teamName: team.teamName,
+      members: team.members.map(m => ({
+        id: m.participantId,
+        username: m.participantName,
+        fullName: m.participantName,
+        email: m.participantEmail,
+        college: m.participantCollege,
+        phoneNumber: m.participantPhone,
+        avatar: m.participantAvatar ?? null,
+        isLeader: false 
+      }))
+    });
+  };
+
+  // Group registrations by team
+  // (Note: we use the getTeamStats function now for display, but this could be useful for other stats)
+  const teams = registrations.reduce((acc, reg) => {
+    if (!reg.isInTeam || !reg.teamCode) return acc;
+    if (!acc[reg.teamCode]) {
+      acc[reg.teamCode] = {
+        teamCode: reg.teamCode,
+        teamName: reg.teamName,
+        members: [],
+        verifiedCount: 0,
+        checkedInCount: 0,
+        eventName: reg.eventName
+      };
+    }
+    acc[reg.teamCode].members.push(reg);
+    if (reg.verified) acc[reg.teamCode].verifiedCount++;
+    if (reg.checkedIn) acc[reg.teamCode].checkedInCount++;
+    return acc;
+  }, {} as Record<string, {
+    teamCode: string;
+    teamName: string | null;
+    members: RegistrationRow[];
+    verifiedCount: number;
+    checkedInCount: number;
+    eventName: string;
+  }>);
+
+  const teamList = Object.values(teams);
+
   return (
     <>
+      {selectedTeam && (
+        <TeamDetailsModal
+          team={selectedTeam}
+          onClose={() => setSelectedTeam(null)}
+        />
+      )}
       <HandDrawnCard className="p-6 sm:p-8">
         <h2 className="hand-drawn-title text-white text-2xl mb-4">
           Registrations
         </h2>
         <div className="flex flex-wrap gap-4 mb-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-cyan text-sm font-semibold">
+              View Mode
+            </label>
+            <div className="flex bg-black/40 rounded p-1 border border-white/20 h-[42px]">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-3 py-1 text-sm rounded transition-colors ${
+                  viewMode === "list"
+                    ? "bg-cyan text-white font-bold"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                List
+              </button>
+              <button
+                onClick={() => setViewMode("teams")}
+                className={`px-3 py-1 text-sm rounded transition-colors ${
+                  viewMode === "teams"
+                    ? "bg-cyan text-white font-bold"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                Teams
+              </button>
+            </div>
+          </div>
           <div>
             <label className="block text-cyan text-sm font-semibold mb-1">
               Event
@@ -225,7 +368,10 @@ export default function AdminRegistrationsClient({
               Checked in: <span className="text-white">{registrations.filter((r) => r.checkedIn).length}</span>
             </div>
             <div className="text-cyan font-semibold">
-              Team: <span className="text-white">{registrations.filter((r) => r.isInTeam).length}</span>
+              Unique teams: <span className="text-white">{new Set(registrations.filter((r) => r.isInTeam && r.teamCode).map((r) => r.teamCode)).size}</span>
+            </div>
+            <div className="text-cyan font-semibold">
+              In team: <span className="text-white">{registrations.filter((r) => r.isInTeam).length}</span>
             </div>
             <div className="text-cyan font-semibold">
               Solo: <span className="text-white">{registrations.filter((r) => !r.isInTeam).length}</span>
@@ -236,6 +382,41 @@ export default function AdminRegistrationsClient({
           <p className="text-white/70">Loading...</p>
         ) : registrations.length === 0 ? (
           <p className="text-white/70">No registrations found.</p>
+        ) : viewMode === "teams" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {getTeamStats().map((team) => (
+              <div
+                key={team.teamCode}
+                onClick={() => handleTeamClick(team)}
+                className="bg-white/5 border border-white/10 rounded-lg p-4 cursor-pointer hover:bg-white/10 transition-all hover:scale-[1.02] group"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg text-white group-hover:text-cyan transition-colors truncate pr-2">
+                    {team.teamName || "Unnamed Team"}
+                  </h3>
+                  <span className="text-xs font-mono bg-white/10 px-2 py-1 rounded text-white/60">
+                    {team.teamCode}
+                  </span>
+                </div>
+                
+                <div className="text-sm text-cyan mb-3">{team.eventName}</div>
+                
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="bg-white/5 px-2 py-1 rounded text-white/70">
+                    👥 {team.members.length} members
+                  </span>
+                  <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded">
+                    ✓ {team.members.filter(m => m.verified).length} verified
+                  </span>
+                  {team.members.some(m => m.checkedIn) && (
+                    <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">
+                      📍 {team.members.filter(m => m.checkedIn).length} in
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -243,7 +424,8 @@ export default function AdminRegistrationsClient({
                 <tr className="border-b-2 border-white/30">
                   <SortTh col="eventName" label="Event" />
                   <SortTh col="participant" label="Participant" />
-                  <SortTh col="teamCode" label="Team" />
+                  <SortTh col="teamName" label="Team" />
+                  <SortTh col="teamCode" label="Team code" />
                   <SortTh col="verified" label="Verified" />
                   <SortTh col="checkedIn" label="Checked in" />
                   <SortTh col="checkedInAt" label="Checked in at" />
@@ -264,7 +446,28 @@ export default function AdminRegistrationsClient({
                       </div>
                     </td>
                     <td className="py-2 pr-3 text-white/80">
-                      {reg.isInTeam ? reg.teamCode ?? "Team" : "-"}
+                      {reg.isInTeam ? (
+                        <button
+                          onClick={() => {
+                            if (reg.teamCode) {
+                              // Construct a minimal team object to pass to handleTeamClick
+                              // It will look up full details or use what's available
+                              const teamRows = registrations.filter(r => r.teamCode === reg.teamCode);
+                              handleTeamClick({
+                                teamCode: reg.teamCode!,
+                                teamName: reg.teamName,
+                                members: teamRows,
+                              });
+                            }
+                          }}
+                          className="hover:text-cyan hover:underline text-left"
+                        >
+                          {reg.teamName ?? reg.teamCode ?? "Team"}
+                        </button>
+                      ) : "-"}
+                    </td>
+                    <td className="py-2 pr-3 text-white/80">
+                      {reg.isInTeam ? (reg.teamCode ?? "-") : "-"}
                     </td>
                     <td className="py-2 pr-3 text-white/80">
                       {editingId === reg.id ? (

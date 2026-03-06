@@ -64,9 +64,17 @@ export async function GET(request: Request) {
     }
 
     const regs = await Registration.find(query)
-      .populate("participant", "username email fullName")
+      .populate("participant", "username email fullName college phoneNumber avatar")
+
       .populate("eventId", "eventName")
-      .populate("teamId", "teamCode teamLeader team")
+      .populate({
+        path: "teamId",
+        select: "teamCode teamName teamLeader team",
+        populate: {
+          path: "team",
+          select: "username email fullName college phoneNumber avatar",
+        },
+      })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -78,9 +86,14 @@ export async function GET(request: Request) {
     return NextResponse.json({
       registrations: regs.map((r) => {
         const rAny = r as Record<string, unknown>;
-        const participant = rAny.participant as { _id?: unknown; username?: string; email?: string; fullName?: string } | null;
+        const participant = rAny.participant as { _id?: unknown; username?: string; email?: string; fullName?: string; college?: string; phoneNumber?: string; avatar?: number } | null;
         const event = rAny.eventId as { _id?: unknown; eventName?: string } | null;
-        const team = rAny.teamId as { teamCode?: string } | null;
+        const team = rAny.teamId as { 
+          teamCode?: string; 
+          teamName?: string;
+          team?: Array<{ _id: unknown; username?: string; email?: string; fullName?: string; college?: string; phoneNumber?: string; avatar?: number }>;
+          teamLeader?: unknown;
+        } | null;
         const eventIdRaw = event?._id ?? rAny.eventId;
         return {
           id: String(rAny._id ?? ""),
@@ -89,9 +102,23 @@ export async function GET(request: Request) {
           isInTeam: rAny.isInTeam ?? false,
           teamId: rAny.teamId ? String((rAny.teamId as { _id?: unknown })?._id ?? rAny.teamId) : null,
           teamCode: team?.teamCode ?? null,
+          teamName: team?.teamName ?? null,
+          teamMembers: team?.team?.map(m => ({
+            id: String(m._id ?? ""),
+            username: m.username ?? "",
+            fullName: m.fullName ?? "",
+            email: m.email ?? "",
+            college: m.college ?? "",
+            phoneNumber: m.phoneNumber ?? "",
+            avatar: m.avatar ?? null,
+            isLeader: String(m._id) === String((team.teamLeader as { _id?: unknown })?._id ?? team.teamLeader)
+          })) ?? [],
           participantId: participant ? String(participant._id ?? "") : String(rAny.participant ?? ""),
           participantName: participant?.fullName || participant?.username || "",
           participantEmail: participant?.email ?? "",
+          participantCollege: participant?.college ?? "",
+          participantPhone: participant?.phoneNumber ?? "",
+          participantAvatar: participant?.avatar ?? null,
           verified: rAny.verified ?? false,
           checkedIn: rAny.checkedIn ?? false,
           checkedInAt: rAny.checkedInAt ?? null,
