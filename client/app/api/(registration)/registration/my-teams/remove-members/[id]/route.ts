@@ -80,7 +80,7 @@ export async function PATCH(
             { status: 200 }
         );
     } catch (error) {
-        console.error("Error in Fetching Registered events:", error);
+        console.error("Error in Removing member:", error);
         return NextResponse.json(
             { error: "Internal Server Error" },
             { status: 500 },

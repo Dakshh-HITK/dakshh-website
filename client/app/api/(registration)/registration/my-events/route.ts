@@ -13,7 +13,7 @@ export async function GET() {
         await connect();
 
         const registrations = await Registration.find({ participant: session.user.id })
-            .populate('eventId', 'eventName category date time venue banner')
+            .populate('eventId', 'eventName category date time venue banner isPaidEvent')
             .select("-checkedIn -foodServedCount")
             .lean();
 
