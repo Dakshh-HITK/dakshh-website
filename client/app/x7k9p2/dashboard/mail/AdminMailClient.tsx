@@ -542,7 +542,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
 
   return (
     <>
-      <HandDrawnCard className="p-6 sm:p-8">
+      <HandDrawnCard className="p-6 sm:p-8" overflowVisible>
         <h2 className="hand-drawn-title text-white text-2xl mb-4">
           Compose Email
         </h2>
@@ -890,12 +890,13 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
               Dakshh AI
             </button>
           </div>
-          <div data-color-mode="dark">
+          <div data-color-mode="dark" className="md-editor-toolbar-fix">
             <MDEditor
               value={bodyMarkdown}
               onChange={(v) => setBodyMarkdown(v ?? "")}
               height={300}
               preview="live"
+              overflow={false}
             />
           </div>
         </div>
@@ -1125,6 +1126,9 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
               </div>
               <div className="flex-1 overflow-y-auto">
                 <div className="text-cyan text-sm font-semibold mb-1">Body</div>
+                <p className="text-white/50 text-xs mb-2">
+                  Note: Empty new lines might not appear in this preview. But they will appear in the actual email just as in the markdown editor.
+                </p>
                 <div
                   className="text-white/90 bg-black/30 rounded p-4 border border-white/10 prose prose-invert prose-sm max-w-none"
                   dangerouslySetInnerHTML={{ __html: previewBodyHtml }}

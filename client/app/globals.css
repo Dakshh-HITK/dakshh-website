@@ -657,3 +657,12 @@ footer h3 {
     transform: scale(1.008);
   }
 }
+
+/* MDEditor toolbar: keep above scrollable content and sticky below navbar when page scrolls */
+.md-editor-toolbar-fix .w-md-editor-toolbar {
+  position: sticky;
+  top: 4rem;
+  z-index: 40;
+  background-color: var(--md-editor-background-color, #1e1e1e);
+  isolation: isolate;
+}
