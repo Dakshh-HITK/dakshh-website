@@ -117,7 +117,7 @@ export async function POST(
       isInTeam: true,
       teamId: targetTeam._id,
       participant: session.user.id,
-      verified: false, // Unverified by default for paid events
+      verified: targetTeam.paymentStatus === "completed" ? true : false
     });
 
     targetTeam.team.push(user._id);
