@@ -12,7 +12,7 @@ interface Stat {
 export default function StatsSection() {
   const [users, setUsers] = useState<number>(200);
   const stats: Stat[] = [
-    { label: 'Total Prize Pool', value: '₹2,00,000+', color: 'text-yellow' },
+    { label: 'Total Prize Pool', value: '₹4,00,000+', color: 'text-yellow' },
     { label: 'Participants', value: `${users}+`, color: 'text-cyan' },
     { label: 'Events', value: '20+', color: 'text-green' },
     { label: 'Categories & tracks', value: '6+', color: 'text-red' },
