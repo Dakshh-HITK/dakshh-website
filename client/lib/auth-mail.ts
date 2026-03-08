@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
 import { EmailTemplate } from "@/components/email-template";
 import { OtpEmailTemplate } from "@/components/otp-email-template";
@@ -8,6 +9,18 @@ import { CustomMailTemplate } from "@/components/custom-mail-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const onboardingFrom = "Dakshh Team <onboarding@dakshh-hitk.com>";
+
+/* ── SMTP transporter for mass mailing (Gmail app password) ── */
+const smtpTransporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+const smtpFrom = `Dakshh Team <${process.env.SMTP_USER}>`;
 
 export async function sendWelcomeEmail(to: string) {
   return resend.emails.send({
@@ -71,16 +84,18 @@ export async function sendSeminarConfirmationEmail(
   });
 }
 
+/* ── Mass mail via SMTP (Gmail) instead of Resend ── */
 export async function sendCustomMail(
   to: string[],
   subject: string,
   htmlBody: string
 ) {
   const html = await render(CustomMailTemplate({ htmlContent: htmlBody }));
-  return resend.emails.send({
-    from: onboardingFrom,
-    to,
+  const info = await smtpTransporter.sendMail({
+    from: smtpFrom,
+    to: to.join(", "),
     subject,
     html,
   });
+  return { data: { id: info.messageId }, error: null };
 }
