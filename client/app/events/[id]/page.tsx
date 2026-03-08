@@ -47,6 +47,7 @@ const EventPage = () => {
   const [showCreateTeam, setShowCreateTeam] = useState(false);
   const [showSoloConfirm, setShowSoloConfirm] = useState(false);
   const [completingPayment, setCompletingPayment] = useState(false);
+  const [unstopLinks, setUnstopLinks] = useState<Record<string, string>>({});
 
   const fetchData = async () => {
     if (!id) {
@@ -93,6 +94,13 @@ const EventPage = () => {
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    fetch("/api/events/unstop-links")
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data: Record<string, string>) => setUnstopLinks(data))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -482,159 +490,178 @@ const EventPage = () => {
               </div>
 
               <div className="mt-8 sticky bottom-0 pt-4 bg-linear-to-t from-black/90 to-transparent space-y-3">
-                {!event.isActive ? (
+                {/* ── UNSTOP REDIRECT (Hack Among Us / Skeld Sprint / ModelForge) ── */}
+                {unstopLinks[event.eventName] ? (
                   <div className="flex justify-center">
-                    <button
-                      className="hand-drawn-button text-xl px-12 py-4 cursor-not-allowed w-full sm:w-auto opacity-80"
-                      disabled
+                    <a
+                      href={unstopLinks[event.eventName]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto"
                     >
-                      COMING SOON
-                    </button>
+                      <button className="hand-drawn-button text-xl px-12 py-4 bg-green-600 hover:bg-green-700 w-full">
+                        Register on Unstop
+                      </button>
+                    </a>
                   </div>
-                ) : event.isTeamEvent ? (
-                  event.userRegistration?.isRegistered && event.myTeam ? (
-                    <div className="rounded-lg border border-blue-500/40 bg-blue-900/20 p-4 space-y-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-blue-200 font-semibold">
-                          You are in a team
-                        </p>
-                        <p className="text-xs text-blue-100">
-                          {event.myTeam.teamSize}/{event.maxMembersPerTeam}{" "}
-                          members
-                        </p>
+                ) : (
+                  /* ── ORIGINAL REGISTRATION UI (kept, not removed) ── */
+                  <>
+                    {!event.isActive ? (
+                      <div className="flex justify-center">
+                        <button
+                          className="hand-drawn-button text-xl px-12 py-4 cursor-not-allowed w-full sm:w-auto opacity-80"
+                          disabled
+                        >
+                          COMING SOON
+                        </button>
                       </div>
+                    ) : event.isTeamEvent ? (
+                      event.userRegistration?.isRegistered && event.myTeam ? (
+                        <div className="rounded-lg border border-blue-500/40 bg-blue-900/20 p-4 space-y-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-blue-200 font-semibold">
+                              You are in a team
+                            </p>
+                            <p className="text-xs text-blue-100">
+                              {event.myTeam.teamSize}/{event.maxMembersPerTeam}{" "}
+                              members
+                            </p>
+                          </div>
 
-                      <p className="text-xs text-blue-100/80">Team Name</p>
-                      <p className="font-mono text-white break-all">
-                        {event.myTeam.teamName}
-                      </p>
+                          <p className="text-xs text-blue-100/80">Team Name</p>
+                          <p className="font-mono text-white break-all">
+                            {event.myTeam.teamName}
+                          </p>
 
-                      <p className="text-xs text-blue-100/80">Team Code</p>
-                      <p className="font-mono text-white break-all">
-                        {event.myTeam.teamCode}
-                      </p>
-                      <div className="space-y-1">
-                        {event.myTeam.members?.map((member) => {
-                          const displayName =
-                            member.fullName || member.username || "Unknown";
-                          return (
-                            <div
-                              key={member._id}
-                              className="flex items-center justify-between text-sm text-blue-50"
+                          <p className="text-xs text-blue-100/80">Team Code</p>
+                          <p className="font-mono text-white break-all">
+                            {event.myTeam.teamCode}
+                          </p>
+                          <div className="space-y-1">
+                            {event.myTeam.members?.map((member) => {
+                              const displayName =
+                                member.fullName || member.username || "Unknown";
+                              return (
+                                <div
+                                  key={member._id}
+                                  className="flex items-center justify-between text-sm text-blue-50"
+                                >
+                                  <span>{displayName}</span>
+                                  {member.isLeader && (
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-200">
+                                      Leader
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {event.isPaidEvent &&
+                            event.myTeam.isTeamLeader &&
+                            event.myTeam.paymentStatus !== "completed" && (
+                              <button
+                                className="hand-drawn-button w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2"
+                                onClick={completePayment}
+                                disabled={completingPayment}
+                              >
+                                {completingPayment ? (
+                                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <>
+                                    <span>💳</span>
+                                    <span>Complete Payment</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="flex gap-2">
+                            <input
+                              value={teamCodeInput}
+                              onChange={(e) => setTeamCodeInput(e.target.value)}
+                              placeholder="Enter Team Code (e.g. DAKSHH-ABCD12)"
+                              className="flex-1 rounded-lg border border-white/25 bg-black/70 px-3 py-2 text-sm outline-none focus:border-cyan"
+                              disabled={loading || registering}
+                            />
+                            <button
+                              className="hand-drawn-button px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm"
+                              disabled={loading || registering}
+                              onClick={joinTeam}
                             >
-                              <span>{displayName}</span>
-                              {member.isLeader && (
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-200">
-                                  Leader
-                                </span>
+                              {registering ? (
+                                <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                "JOIN TEAM"
                               )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {event.isPaidEvent &&
-                        event.myTeam.isTeamLeader &&
-                        event.myTeam.paymentStatus !== "completed" && (
+                            </button>
+                          </div>
                           <button
-                            className="hand-drawn-button w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2"
-                            onClick={completePayment}
-                            disabled={completingPayment}
+                            className="hand-drawn-button text-xl px-12 py-4 bg-red-600 hover:bg-red-700 w-full"
+                            disabled={loading || registering}
+                            onClick={() => setShowCreateTeam(true)}
                           >
-                            {completingPayment ? (
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            {registering ? (
+                              <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
                             ) : (
-                              <>
-                                <span>💳</span>
-                                <span>Complete Payment</span>
-                              </>
+                              "CREATE MY TEAM"
                             )}
                           </button>
-                        )}
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <input
-                          value={teamCodeInput}
-                          onChange={(e) => setTeamCodeInput(e.target.value)}
-                          placeholder="Enter Team Code (e.g. DAKSHH-ABCD12)"
-                          className="flex-1 rounded-lg border border-white/25 bg-black/70 px-3 py-2 text-sm outline-none focus:border-cyan"
-                          disabled={loading || registering}
-                        />
+                        </div>
+                      )
+                    ) : event.userRegistration?.isRegistered ? (
+                      event.isPaidEvent && !event.userRegistration?.verified ? (
+                        <div className="space-y-3">
+                          <div className="flex justify-center">
+                            <button
+                              className="hand-drawn-button text-xl px-12 py-4 bg-yellow-600 hover:bg-yellow-700 w-full sm:w-auto"
+                              disabled={loading || completingPayment}
+                              onClick={completeSoloPayment}
+                            >
+                              {completingPayment ? (
+                                <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                "COMPLETE PAYMENT"
+                              )}
+                            </button>
+                          </div>
+                          <p className="text-center text-sm text-yellow-200">
+                            Payment pending - Complete payment to verify registration
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex justify-center">
+                          <button
+                            className="hand-drawn-button text-xl px-12 py-4 bg-green-600 hover:bg-green-700 w-full sm:w-auto cursor-not-allowed"
+                            disabled
+                          >
+                            REGISTERED
+                          </button>
+                        </div>
+                      )
+                    ) : (
+                      <div className="flex justify-center">
                         <button
-                          className="hand-drawn-button px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm"
-                          disabled={loading || registering}
-                          onClick={joinTeam}
+                          className="hand-drawn-button text-xl px-12 py-4 bg-red-600 hover:bg-red-700 w-full sm:w-auto"
+                          disabled={
+                            loading ||
+                            registering ||
+                            Boolean(event.userRegistration?.isRegistered)
+                          }
+                          onClick={openSoloConfirmation}
                         >
                           {registering ? (
                             <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
                           ) : (
-                            "JOIN TEAM"
+                            "REGISTER"
                           )}
                         </button>
                       </div>
-                      <button
-                        className="hand-drawn-button text-xl px-12 py-4 bg-red-600 hover:bg-red-700 w-full"
-                        disabled={loading || registering}
-                        onClick={() => setShowCreateTeam(true)}
-                      >
-                        {registering ? (
-                          <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          "CREATE MY TEAM"
-                        )}
-                      </button>
-                    </div>
-                  )
-                ) : event.userRegistration?.isRegistered ? (
-                  event.isPaidEvent && !event.userRegistration?.verified ? (
-                    <div className="space-y-3">
-                      <div className="flex justify-center">
-                        <button
-                          className="hand-drawn-button text-xl px-12 py-4 bg-yellow-600 hover:bg-yellow-700 w-full sm:w-auto"
-                          disabled={loading || completingPayment}
-                          onClick={completeSoloPayment}
-                        >
-                          {completingPayment ? (
-                            <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            "COMPLETE PAYMENT"
-                          )}
-                        </button>
-                      </div>
-                      <p className="text-center text-sm text-yellow-200">
-                        Payment pending - Complete payment to verify registration
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex justify-center">
-                      <button
-                        className="hand-drawn-button text-xl px-12 py-4 bg-green-600 hover:bg-green-700 w-full sm:w-auto cursor-not-allowed"
-                        disabled
-                      >
-                        REGISTERED
-                      </button>
-                    </div>
-                  )
-                ) : (
-                  <div className="flex justify-center">
-                    <button
-                      className="hand-drawn-button text-xl px-12 py-4 bg-red-600 hover:bg-red-700 w-full sm:w-auto"
-                      disabled={
-                        loading ||
-                        registering ||
-                        Boolean(event.userRegistration?.isRegistered)
-                      }
-                      onClick={openSoloConfirmation}
-                    >
-                      {registering ? (
-                        <div className="w-6 h-6 mx-10 border-4 border-red-100 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        "REGISTER"
-                      )}
-                    </button>
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
             </HandDrawnCard>
