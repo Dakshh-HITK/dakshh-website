@@ -106,12 +106,12 @@ export const partners: Partner[] = [
   //     "https://res.cloudinary.com/dnil7l0j1/image/upload/v1772911511/BG_Remove_CodeRush_X_Logo_MAIN_-_CodeRushX_vefhbe.png",
   //   website_url: "https://www.linkedin.com/company/coderushx-community",
   // },
-  // {
-  //   id: "14",
-  //   partner_name: "GDG on Campus TMSL",
-  //   partner_type: "Community Partner",
-  //   logo_url:
-  //     "https://res.cloudinary.com/dnil7l0j1/image/upload/v1772909842/LOGOS_zbzcub.png",
-  //   website_url: "https://gdg.community.dev/gdg-on-campus-techno-main-salt-lake-kolkata-india/",
-  // },
+  {
+    id: "14",
+    partner_name: "GDG on Campus TMSL",
+    partner_type: "Community Partner",
+    logo_url:
+      "https://res.cloudinary.com/dnil7l0j1/image/upload/v1772909842/LOGOS_zbzcub.png",
+    website_url: "https://gdg.community.dev/gdg-on-campus-techno-main-salt-lake-kolkata-india/",
+  },
 ];
