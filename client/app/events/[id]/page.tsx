@@ -101,7 +101,7 @@ const EventPage = () => {
     fetch("/api/events/unstop-links")
       .then((res) => (res.ok ? res.json() : {}))
       .then((data: Record<string, string>) => setUnstopLinks(data))
-      .catch(() => { });
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -187,7 +187,11 @@ const EventPage = () => {
   };
 
   const openSoloConfirmation = () => {
-    if (loading || registering || Boolean(event?.userRegistration?.isRegistered)) {
+    if (
+      loading ||
+      registering ||
+      Boolean(event?.userRegistration?.isRegistered)
+    ) {
       return;
     }
     setShowSoloConfirm(true);
@@ -515,7 +519,8 @@ const EventPage = () => {
                 ) : (
                   /* ── ORIGINAL REGISTRATION UI (kept, not removed) ── */
                   <>
-                    {!event.isActive && !event.userRegistration?.isRegistered ? (
+                    {!event.isActive &&
+                    !event.userRegistration?.isRegistered ? (
                       <div className="flex justify-center">
                         <button
                           className="hand-drawn-button text-xl px-12 py-4 cursor-not-allowed w-full sm:w-auto opacity-80"
@@ -637,7 +642,8 @@ const EventPage = () => {
                             </button>
                           </div>
                           <p className="text-center text-sm text-yellow-200">
-                            Payment pending - Complete payment to verify registration
+                            Payment pending - Complete payment to verify
+                            registration
                           </p>
                         </div>
                       ) : (
@@ -669,7 +675,8 @@ const EventPage = () => {
                             )}
                           </button>
                         </div>
-                      ))}
+                      )
+                    )}
                   </>
                 )}
               </div>
