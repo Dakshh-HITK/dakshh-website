@@ -344,10 +344,7 @@ export default function Home() {
         {challenges.length === 0 && (
           <div className="gate-container">
             <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem" }}>
-              No challenges loaded yet. An admin needs to seed the database.
-            </p>
-            <p style={{ color: "#555", fontSize: "0.85rem", marginTop: "8px" }}>
-              POST to /api/admin/seed to populate challenges.
+              No challenges loaded yet. An admin needs to populate the database.
             </p>
           </div>
         )}
