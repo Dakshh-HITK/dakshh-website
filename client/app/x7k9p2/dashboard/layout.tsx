@@ -14,7 +14,7 @@ export default async function AdminDashboardLayout({
   }
 
   return (
-    <div className="w-full min-h-screen relative" data-main-content>
+    <div className="w-full min-h-screen relative overflow-x-hidden" data-main-content>
       <AdminDashboardNav session={session} />
       {children}
     </div>

@@ -542,8 +542,8 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
 
   return (
     <>
-      <HandDrawnCard className="p-6 sm:p-8" overflowVisible>
-        <h2 className="hand-drawn-title text-white text-2xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8" overflowVisible>
+        <h2 className="hand-drawn-title text-white text-xl sm:text-2xl mb-3 sm:mb-4">
           Compose Email
         </h2>
 
@@ -562,7 +562,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
               Add recipients ({selectedList.length} selected)
             </button>
             {recipientDropdownOpen && (
-              <div className="absolute left-0 top-full mt-1 z-50 w-full max-w-md rounded border border-white/20 bg-black/95 py-2 shadow-xl max-h-80 overflow-y-auto">
+              <div className="absolute left-0 top-full mt-1 z-50 w-full min-w-[280px] max-w-md rounded border border-white/20 bg-black/95 py-2 shadow-xl max-h-[70vh] sm:max-h-80 overflow-y-auto">
                 <div className="px-2 mb-2">
                   <input
                     type="text"
@@ -572,7 +572,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
                     className="hand-drawn-input w-full text-sm"
                   />
                 </div>
-                <div className="flex border-b border-white/10 mb-2 pb-2">
+                <div className="flex flex-wrap border-b border-white/10 mb-2 pb-2 gap-1">
                   {(
                     [
                       "participants",
@@ -933,8 +933,8 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
 
       {/* AI Draft Modal */}
       {aiModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80">
-          <div className="w-full max-w-md hand-drawn-card p-6">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/80">
+          <div className="w-full max-w-md hand-drawn-card p-4 sm:p-6 mx-2">
             <h3 className="hand-drawn-title text-white text-xl mb-2">
               Dakshh AI
             </h3>
@@ -973,8 +973,8 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
 
       {/* Placeholder settings modal */}
       {placeholderSettingsOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80">
-          <div className="w-full max-w-lg hand-drawn-card p-6 max-h-[85vh] flex flex-col">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/80">
+          <div className="w-full max-w-lg hand-drawn-card p-4 sm:p-6 max-h-[85vh] flex flex-col mx-2 sm:mx-0">
             <h3 className="hand-drawn-title text-white text-xl mb-1">
               Placeholder settings
             </h3>
@@ -1085,8 +1085,8 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
         const previewBody = replacePlaceholders(bodyMarkdown || "(No content)", resolved);
         const previewBodyHtml = marked(previewBody, { gfm: true }) as string;
         return createPortal(
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80">
-            <div className="w-full max-w-2xl hand-drawn-card p-6 max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80">
+            <div className="w-full max-w-2xl hand-drawn-card p-4 sm:p-6 max-h-[90vh] flex flex-col mx-2 sm:mx-0">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="hand-drawn-title text-white text-xl">
                   Email preview

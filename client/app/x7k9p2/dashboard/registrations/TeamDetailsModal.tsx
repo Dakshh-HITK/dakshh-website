@@ -58,7 +58,7 @@ export default function TeamDetailsModal({
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex min-h-screen w-full items-center justify-center overflow-y-auto p-4">
+    <div className="fixed inset-0 z-[9999] flex min-h-screen w-full items-center justify-center overflow-y-auto p-3 sm:p-4">
       {/* Backdrop - covers full viewport, above navbar (z-50) */}
       <div
         className={`fixed inset-0 z-0 bg-black/85 backdrop-blur-md transition-opacity duration-300 ${
@@ -70,7 +70,7 @@ export default function TeamDetailsModal({
 
       {/* Modal Content */}
       <div
-        className={`relative z-10 w-full max-w-2xl transition-all duration-300 transform ${
+        className={`relative z-10 w-full max-w-2xl mx-2 sm:mx-0 transition-all duration-300 transform ${
           isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
@@ -88,10 +88,10 @@ export default function TeamDetailsModal({
           }}/>
         </button>
 
-        <HandDrawnCard className="bg-[#1a1a1a] border-2 border-white/80 p-6 md:p-8 max-h-[90vh] flex flex-col">
+        <HandDrawnCard className="bg-[#1a1a1a] border-2 border-white/80 p-4 sm:p-6 md:p-8 max-h-[90vh] flex flex-col">
           {/* Header */}
-          <div className="text-center mb-6 shrink-0">
-            <h2 className="hand-drawn-title text-3xl md:text-4xl text-cyan mb-2">
+          <div className="text-center mb-4 sm:mb-6 shrink-0">
+            <h2 className="hand-drawn-title text-2xl sm:text-3xl md:text-4xl text-cyan mb-2">
               {team.teamName || "Unnamed Team"}
             </h2>
             <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20">

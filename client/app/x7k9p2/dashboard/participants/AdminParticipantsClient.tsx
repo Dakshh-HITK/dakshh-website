@@ -148,9 +148,9 @@ export default function AdminParticipantsClient({
 
   return (
     <>
-      <HandDrawnCard className="p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <h2 className="hand-drawn-title text-white text-2xl">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title text-white text-xl sm:text-2xl">
             Participants
           </h2>
           <input
@@ -162,7 +162,7 @@ export default function AdminParticipantsClient({
           />
         </div>
         {!loading && participants.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-4 p-3 rounded bg-black/20 border border-white/10">
+          <div className="flex flex-wrap gap-2 sm:gap-4 mb-3 sm:mb-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
             <div className="text-cyan font-semibold">
               Total: <span className="text-white">{participants.length}</span>
             </div>
@@ -185,8 +185,8 @@ export default function AdminParticipantsClient({
         ) : participants.length === 0 ? (
           <p className="text-white/70">No participants found.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
               <thead>
                 <tr className="border-b-2 border-white/30">
                   <SortTh col="username" label="Username" />
@@ -338,7 +338,7 @@ export default function AdminParticipantsClient({
                       )}
                     </td>
                     <td className="py-2">
-                      <div className="flex gap-2 items-center">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
                         <button
                           type="button"
                           onClick={() =>

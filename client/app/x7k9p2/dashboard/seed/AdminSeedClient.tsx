@@ -60,7 +60,7 @@ export default function AdminSeedClient() {
   }
 
   return (
-    <HandDrawnCard className="p-6 sm:p-8">
+    <HandDrawnCard className="p-4 sm:p-6 md:p-8">
       <h2 className="hand-drawn-title text-white text-2xl mb-4">
         Super Admin Seed
       </h2>

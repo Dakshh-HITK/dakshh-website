@@ -483,11 +483,11 @@ export default function AdminRegistrationsClient({
           onClose={() => setSelectedTeam(null)}
         />
       )}
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-2xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title text-white text-xl sm:text-2xl mb-3 sm:mb-4">
           Registrations
         </h2>
-        <div className="flex flex-col gap-4 mb-4">
+        <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4">
           {/* Row 1: Search bar full width */}
           <div>
             <label className="block text-cyan text-sm font-semibold mb-1">
@@ -503,7 +503,7 @@ export default function AdminRegistrationsClient({
           </div>
 
           {/* Row 2: Filters and actions */}
-          <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex flex-wrap gap-3 sm:gap-4 items-end">
             <div className="flex flex-col gap-1">
               <label className="text-cyan text-sm font-semibold">
                 View Mode
@@ -599,7 +599,7 @@ export default function AdminRegistrationsClient({
               {selectionMode ? "Done" : "Select"}
             </button>
 
-            <div className="relative flex flex-col ml-auto" ref={exportDropdownRef}>
+            <div className="relative flex flex-col w-full sm:w-auto sm:ml-auto" ref={exportDropdownRef}>
               <span className="block text-sm font-semibold mb-1 invisible select-none" aria-hidden="true">
                 &nbsp;
               </span>
@@ -689,7 +689,7 @@ export default function AdminRegistrationsClient({
           </div>
         </div>
         {!loading && registrations.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-4 p-3 rounded bg-black/20 border border-white/10">
+          <div className="flex flex-wrap gap-2 sm:gap-4 mb-3 sm:mb-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
             <div className="text-cyan font-semibold">
               Total: <span className="text-white">{filteredByStatus.length}</span>
             </div>
@@ -715,7 +715,7 @@ export default function AdminRegistrationsClient({
         ) : filteredByStatus.length === 0 ? (
           <p className="text-white/70">No registrations found.</p>
         ) : viewMode === "teams" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {getTeamStats().map((team) => (
               <div
                 key={team.teamCode}
@@ -791,8 +791,8 @@ export default function AdminRegistrationsClient({
             ))}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[800px]">
               <thead>
                 <tr className="border-b-2 border-white/30">
                   {selectionMode && (
@@ -938,7 +938,7 @@ export default function AdminRegistrationsClient({
                       )}
                     </td>
                     <td className="py-2">
-                      <div className="flex gap-2 items-center">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
                         <button
                           type="button"
                           onClick={() =>

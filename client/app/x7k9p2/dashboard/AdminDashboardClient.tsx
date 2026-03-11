@@ -87,7 +87,7 @@ export default function AdminDashboardClient() {
 
   if (loading) {
     return (
-      <HandDrawnCard className="p-6 sm:p-8">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
         <p className="text-white/70">Loading stats...</p>
       </HandDrawnCard>
     );
@@ -95,7 +95,7 @@ export default function AdminDashboardClient() {
 
   if (error || !stats) {
     return (
-      <HandDrawnCard className="p-6 sm:p-8">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
         <p className="text-red-400 mb-4">{error ?? "Failed to load stats"}</p>
         <button
           type="button"
@@ -119,16 +119,16 @@ export default function AdminDashboardClient() {
     value: number | string;
     sub?: string;
   }) => (
-    <div className="p-3 rounded bg-black/20 border border-white/10">
-      <div className="text-cyan text-sm font-semibold">{label}</div>
-      <div className="text-white text-2xl font-bold">{value}</div>
-      {sub && <div className="text-white/60 text-xs">{sub}</div>}
+    <div className="p-2.5 sm:p-3 rounded bg-black/20 border border-white/10 min-w-0">
+      <div className="text-cyan text-xs sm:text-sm font-semibold truncate">{label}</div>
+      <div className="text-white text-xl sm:text-2xl font-bold">{value}</div>
+      {sub && <div className="text-white/60 text-xs truncate">{sub}</div>}
     </div>
   );
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
         <StatCard label="Participants" value={users.total} />
         <StatCard label="Verified users" value={users.verified} />
         <StatCard label="Complete profiles" value={users.completeProfiles} />
@@ -142,17 +142,18 @@ export default function AdminDashboardClient() {
       </div>
 
       
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
           User signups (last 30 days)
         </h2>
-        <div className="min-h-[300px]">
+        <div className="min-h-[180px]">
           {users.signupsByDay.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={users.signupsByDay}>
+            <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={users.signupsByDay}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="date" stroke="#00d4ff" tick={{ fill: "#fff" }} />
-                <YAxis stroke="#00d4ff" tick={{ fill: "#fff" }} />
+                <XAxis dataKey="date" stroke="#00d4ff" tick={{ fill: "#fff", fontSize: 10 }} />
+                <YAxis stroke="#00d4ff" tick={{ fill: "#fff", fontSize: 10 }} />
                 <Tooltip
                   contentStyle={{ background: "rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
                   labelStyle={{ color: "#00d4ff" }}
@@ -174,8 +175,9 @@ export default function AdminDashboardClient() {
                   dot={{ fill: "#7bff7b", r: 4 }}
                   name="Profile completed"
                 />
-              </LineChart>
-            </ResponsiveContainer>
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <p className="text-white/60">No signups in the last 30 days</p>
           )}
@@ -183,11 +185,11 @@ export default function AdminDashboardClient() {
       </HandDrawnCard>
 
 
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
           Registration breakdown
         </h2>
-        <div className="flex flex-wrap gap-4 p-3 rounded bg-black/20 border border-white/10">
+        <div className="flex flex-wrap gap-3 sm:gap-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
           <div className="text-cyan font-semibold">
             Team: <span className="text-white">{registrations.teamCount}</span>
           </div>
@@ -209,54 +211,57 @@ export default function AdminDashboardClient() {
         </div>
       </HandDrawnCard>
 
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
           Registrations (last 30 days)
         </h2>
-        <div className="min-h-[300px]">
+        <div className="min-h-[180px]">
           {registrations.byDay.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={registrations.byDay}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="date" stroke="#00d4ff" tick={{ fill: "#fff" }} />
-                <YAxis stroke="#00d4ff" tick={{ fill: "#fff" }} />
-                <Tooltip
-                  contentStyle={{ background: "rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
-                  labelStyle={{ color: "#00d4ff" }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="registrations"
-                  stroke="#fff675"
-                  strokeWidth={2}
-                  dot={{ fill: "#fff675", r: 4 }}
-                  name="Registrations"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="profilesCompleted"
-                  stroke="#7bff7b"
-                  strokeWidth={2}
-                  dot={{ fill: "#7bff7b", r: 4 }}
-                  name="Profile completed"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={registrations.byDay}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="date" stroke="#00d4ff" tick={{ fill: "#fff", fontSize: 10 }} />
+                  <YAxis stroke="#00d4ff" tick={{ fill: "#fff", fontSize: 10 }} />
+                  <Tooltip
+                    contentStyle={{ background: "rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
+                    labelStyle={{ color: "#00d4ff" }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="registrations"
+                    stroke="#fff675"
+                    strokeWidth={2}
+                    dot={{ fill: "#fff675", r: 3 }}
+                    name="Registrations"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="profilesCompleted"
+                    stroke="#7bff7b"
+                    strokeWidth={2}
+                    dot={{ fill: "#7bff7b", r: 3 }}
+                    name="Profile completed"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <p className="text-white/60">No registrations in the last 30 days</p>
           )}
         </div>
       </HandDrawnCard>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
             Events by category
           </h2>
-          <div className="min-h-[300px]">
+          <div className="min-h-[180px]">
             {events.byCategory.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
+              <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={events.byCategory}
@@ -274,31 +279,34 @@ export default function AdminDashboardClient() {
                     contentStyle={{ background: "rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
                   />
                   <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <p className="text-white/60">No events</p>
             )}
           </div>
         </HandDrawnCard>
 
-        <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-xl mb-4">
+        <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
             Registrations per event (top 10)
           </h2>
-          <div className="min-h-[300px]">
+          <div className="min-h-[180px]">
             {registrations.byEvent.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={registrations.byEvent} layout="vertical" margin={{ left: 80 }}>
+              <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={registrations.byEvent} layout="vertical" margin={{ left: 50, right: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                   <XAxis type="number" stroke="#00d4ff" tick={{ fill: "#fff" }} />
-                  <YAxis type="category" dataKey="eventName" stroke="#00d4ff" tick={{ fill: "#fff" }} width={70} />
+                  <YAxis type="category" dataKey="eventName" stroke="#00d4ff" tick={{ fill: "#fff", fontSize: 10 }} width={60} />
                   <Tooltip
                     contentStyle={{ background: "rgba(0,0,0,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
                   />
                   <Bar dataKey="count" fill="#00d4ff" name="Registrations" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+            </div>
             ) : (
               <p className="text-white/60">No registrations</p>
             )}
@@ -306,14 +314,15 @@ export default function AdminDashboardClient() {
         </HandDrawnCard>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
             Users by role
           </h2>
-          <div className="min-h-[300px]">
+          <div className="min-h-[180px]">
             {users.byRole.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
+              <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={users.byRole}
@@ -332,20 +341,22 @@ export default function AdminDashboardClient() {
                   />
                   <Legend />
                 </PieChart>
-              </ResponsiveContainer>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <p className="text-white/60">No users</p>
             )}
           </div>
         </HandDrawnCard>
 
-        <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-xl mb-4">
+        <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
             Admin users by role
           </h2>
-          <div className="min-h-[300px]">
+          <div className="min-h-[180px]">
             {adminUsers.byRole.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
+              <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={adminUsers.byRole}
@@ -364,7 +375,8 @@ export default function AdminDashboardClient() {
                   />
                   <Legend />
                 </PieChart>
-              </ResponsiveContainer>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <p className="text-white/60">No admin users</p>
             )}
@@ -372,12 +384,12 @@ export default function AdminDashboardClient() {
         </HandDrawnCard>
       </div>
 
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
           Check-in overview
         </h2>
-        <div className="min-h-[300px]">
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={[
                 { name: "Checked in", count: registrations.checkedIn, fill: "#7bff7b" },
@@ -403,11 +415,11 @@ export default function AdminDashboardClient() {
         </div>
       </HandDrawnCard>
 
-      <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
             Among Us game stats
           </h2>
-          <div className="flex flex-wrap gap-4 p-3 rounded bg-black/20 border border-white/10">
+          <div className="flex flex-wrap gap-3 sm:gap-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
             <div className="text-cyan font-semibold">
               Players who played: <span className="text-white">{amongUs.totalPlayers}</span>
             </div>
@@ -428,8 +440,8 @@ export default function AdminDashboardClient() {
           </div>
         </HandDrawnCard>
 
-      <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
             Top 10 leaderboard (Among Us)
           </h2>
           <div className="space-y-2">
@@ -437,15 +449,15 @@ export default function AdminDashboardClient() {
               leaderboard.map((entry, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-2 rounded bg-black/20 border border-white/10"
+                  className="flex items-center justify-between gap-2 p-2 rounded bg-black/20 border border-white/10 min-w-0"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-cyan font-bold w-10">#{i + 1}</span>
-                    <span className="text-white font-medium">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <span className="text-cyan font-bold w-8 sm:w-10 shrink-0">#{i + 1}</span>
+                    <span className="text-white font-medium truncate">
                       {entry.username}
                     </span>
                   </div>
-                  <span className="text-[#fff675] font-bold">{entry.amongUsScore}</span>
+                  <span className="text-[#fff675] font-bold shrink-0">{entry.amongUsScore}</span>
                 </div>
               ))
             ) : (
@@ -455,11 +467,11 @@ export default function AdminDashboardClient() {
         </HandDrawnCard>
 
 
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
           Event breakdown
         </h2>
-        <div className="flex flex-wrap gap-4 p-3 rounded bg-black/20 border border-white/10">
+        <div className="flex flex-wrap gap-3 sm:gap-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
           <div className="text-cyan font-semibold">
             Team events: <span className="text-white">{events.teamCount}</span>
           </div>

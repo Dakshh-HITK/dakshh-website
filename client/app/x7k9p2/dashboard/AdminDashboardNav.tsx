@@ -75,10 +75,10 @@ export default function AdminDashboardNav({
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/20">
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
+        <div className="flex items-center justify-between gap-2 min-w-0">
           {/* Logo */}
-          <Link href={base} className="text-cyan font-bold text-lg shrink-0 uppercase tracking-wider">
+          <Link href={base} className="text-cyan font-bold text-base sm:text-lg shrink-0 uppercase tracking-wider truncate">
             {session.role}
           </Link>
 
@@ -100,8 +100,8 @@ export default function AdminDashboardNav({
           </div>
 
           {/* Desktop right side */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
-            <span className="text-white/60 text-sm truncate max-w-[180px]" title={session.email}>
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0 min-w-0">
+            <span className="text-white/60 text-xs xl:text-sm truncate max-w-[120px] xl:max-w-[180px]" title={session.email}>
               {session.email}
               {session.isMaster && " (Master)"}
             </span>
@@ -129,7 +129,7 @@ export default function AdminDashboardNav({
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="lg:hidden border-t border-white/10 bg-black/95 px-4 py-3 flex flex-col gap-1">
+        <div className="lg:hidden border-t border-white/10 bg-black/95 px-3 sm:px-4 py-3 flex flex-col gap-1 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
           {navItems.map((item) => (
             <Link
               key={item.href}
