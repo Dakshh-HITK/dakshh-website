@@ -192,6 +192,21 @@ body {
   }
 }
 
+/* Admin section title - responsive h2 within admin pages */
+.admin-section-title {
+  font-size: 1rem;
+}
+@media (min-width: 640px) {
+  .admin-section-title {
+    font-size: 1.25rem;
+  }
+}
+@media (min-width: 768px) {
+  .admin-section-title {
+    font-size: 1.5rem;
+  }
+}
+
 .hand-drawn-text {
   font-weight: 300;
   /* Removed fixed font-size to allow Tailwind responsive classes to work */

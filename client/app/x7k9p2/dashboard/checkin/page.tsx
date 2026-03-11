@@ -77,7 +77,7 @@ export default async function AdminCheckInPage() {
         <div className="max-w-4xl mx-auto w-full min-w-0">
           <HandDrawnCard className="p-4 sm:p-6 md:p-8">
             <div className="flex items-center justify-between mb-4 gap-2">
-              <h2 className="hand-drawn-title text-white text-xl sm:text-2xl">
+              <h2 className="hand-drawn-title admin-dashboard-title text-white">
                 Event Check-in
               </h2>
             </div>
