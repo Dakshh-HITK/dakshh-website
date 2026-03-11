@@ -93,7 +93,12 @@ export async function POST(request: Request) {
       gfm: true,
     }) as string;
 
-    for (const r of uniqueRecipients) {
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    let sent = 0;
+    for (let i = 0; i < uniqueRecipients.length; i++) {
+      const r = uniqueRecipients[i];
       const personalizedSubject = replacePlaceholders(subject, r);
       const personalizedBody = replacePlaceholders(baseHtml, r);
       const { error } = await sendCustomMail(
@@ -103,9 +108,22 @@ export async function POST(request: Request) {
       );
       if (error) {
         return NextResponse.json(
-          { error: `Failed to send to ${r.email}: ${String(error)}` },
+          {
+            error: `Failed to send to ${r.email}: ${String(error)}`,
+            sent,
+          },
           { status: 500 }
         );
+      }
+      sent++;
+
+      // Batch pause: longer break every 50 emails to stay well within Gmail limits
+      if (sent % 50 === 0 && i < uniqueRecipients.length - 1) {
+        console.log(`Sent ${sent}/${uniqueRecipients.length}, pausing 2 s…`);
+        await delay(2000);
+      } else if (i < uniqueRecipients.length - 1) {
+        // Small gap between individual emails (pool handles auth reuse)
+        await delay(200);
       }
     }
 
