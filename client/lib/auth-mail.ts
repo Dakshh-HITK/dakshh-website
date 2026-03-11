@@ -11,10 +11,16 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const onboardingFrom = "Dakshh Team <onboarding@dakshh-hitk.com>";
 
 /* ── SMTP transporter for mass mailing (Gmail app password) ── */
+/* pool: true  → reuses a single authenticated connection for multiple emails
+   instead of opening (and authenticating) a new connection per sendMail call.
+   This prevents the "454-4.7.0 Too many login attempts" error.            */
 const smtpTransporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
+  pool: true,
+  maxConnections: 2,
+  maxMessages: 200,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
