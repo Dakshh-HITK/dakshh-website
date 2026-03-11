@@ -1,0 +1,966 @@
+@import "tailwindcss";
+
+:root {
+  --bg-color: #050505;
+  --bg-secondary: #111111;
+  --primary-color: #00ff41;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent-color: #ff003c;
+  --easy-color: #00ff41;
+  --med-color: #ffb800;
+  --hard-color: #ff003c;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  background-image: linear-gradient(
+      rgba(0, 255, 65, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.ctf-app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ============================================
+   HEADER & GLITCH
+   ============================================ */
+.ctf-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.glitch-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.glitch {
+  font-size: 4rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  position: relative;
+  text-shadow: 0.05em 0 0 rgba(255, 0, 60, 0.75),
+    -0.025em -0.05em 0 rgba(0, 255, 65, 0.75),
+    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  animation: glitch 500ms infinite;
+  color: #fff;
+  font-family: "Fira Code", monospace;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--accent-color);
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 var(--primary-color);
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim 2.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 60, 0.75),
+      -0.025em -0.05em 0 rgba(0, 255, 65, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 60, 0.75),
+      -0.025em -0.05em 0 rgba(0, 255, 65, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 60, 0.75),
+      0.025em 0.025em 0 rgba(0, 255, 65, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 60, 0.75),
+      0.025em 0.025em 0 rgba(0, 255, 65, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 rgba(255, 0, 60, 0.75),
+      0.05em 0 0 rgba(0, 255, 65, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 rgba(255, 0, 60, 0.75),
+      0.05em 0 0 rgba(0, 255, 65, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 rgba(255, 0, 60, 0.75),
+      -0.025em -0.025em 0 rgba(0, 255, 65, 0.75),
+      -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(20px, 9999px, 86px, 0);
+  }
+  20% {
+    clip: rect(62px, 9999px, 6px, 0);
+  }
+  40% {
+    clip: rect(31px, 9999px, 11px, 0);
+  }
+  60% {
+    clip: rect(98px, 9999px, 78px, 0);
+  }
+  80% {
+    clip: rect(15px, 9999px, 13px, 0);
+  }
+  100% {
+    clip: rect(53px, 9999px, 96px, 0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip: rect(29px, 9999px, 83px, 0);
+  }
+  20% {
+    clip: rect(65px, 9999px, 71px, 0);
+  }
+  40% {
+    clip: rect(85px, 9999px, 58px, 0);
+  }
+  60% {
+    clip: rect(104px, 9999px, 96px, 0);
+  }
+  80% {
+    clip: rect(2px, 9999px, 19px, 0);
+  }
+  100% {
+    clip: rect(72px, 9999px, 34px, 0);
+  }
+}
+
+.subtitle {
+  font-family: "Fira Code", monospace;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-top: 10px;
+  letter-spacing: 2px;
+}
+
+/* ============================================
+   INTRO / PANEL SECTION
+   ============================================ */
+.intro-panel {
+  background: var(--bg-secondary);
+  border-left: 4px solid var(--primary-color);
+  padding: 20px 30px;
+  border-radius: 4px;
+  margin-bottom: 50px;
+  font-size: 1.1rem;
+}
+
+.intro-panel p {
+  margin-bottom: 15px;
+}
+
+.flag-format code {
+  font-family: "Fira Code", monospace;
+  background: #222;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--primary-color);
+}
+
+/* ============================================
+   SECTION HEADERS
+   ============================================ */
+.section-header {
+  margin-top: 60px;
+  text-align: center;
+  background: var(--bg-secondary);
+  border-left: 4px solid var(--primary-color);
+  padding: 20px 30px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+}
+
+.section-header h2 {
+  font-family: "Fira Code", monospace;
+  letter-spacing: 2px;
+  font-size: 1.6rem;
+}
+
+.section-header p {
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+/* ============================================
+   GRID
+   ============================================ */
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.challenge-card {
+  background: var(--bg-secondary);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.challenge-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.challenge-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 255, 65, 0.1);
+  border-color: rgba(0, 255, 65, 0.3);
+}
+
+.challenge-card:hover::before {
+  transform: scaleX(1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+}
+
+.difficulty {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
+.difficulty.easy {
+  color: var(--easy-color);
+  background: rgba(0, 255, 65, 0.1);
+}
+
+.difficulty.ez-med {
+  color: var(--med-color);
+  background: rgba(255, 184, 0, 0.1);
+}
+
+.difficulty.medium {
+  color: var(--med-color);
+  background: rgba(255, 184, 0, 0.1);
+}
+
+.difficulty.hard {
+  color: var(--hard-color);
+  background: rgba(255, 0, 60, 0.1);
+}
+
+.challenge-card.solved {
+  border-top-color: var(--primary-color) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+  opacity: 0.85;
+}
+
+.solved-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--primary-color);
+  color: #000;
+  font-family: "Fira Code", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.challenge-card {
+  position: relative;
+}
+
+.points {
+  color: var(--text-secondary);
+}
+
+.challenge-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.category {
+  font-family: "Fira Code", monospace;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  flex-grow: 1;
+  margin-bottom: 20px;
+  white-space: pre-line;
+}
+
+/* ============================================
+   FLAG SUBMISSION
+   ============================================ */
+.submission-area {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px dashed #333;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flag-input {
+  background: #111;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+
+.flag-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+}
+
+.submit-btn {
+  background: #222;
+  color: var(--primary-color);
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Fira Code", monospace;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.submit-btn:hover {
+  background: var(--primary-color);
+  color: #000;
+  border-color: var(--primary-color);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status-msg {
+  font-size: 0.85rem;
+  font-family: "Fira Code", monospace;
+  min-height: 20px;
+}
+
+.status-msg.error {
+  color: var(--accent-color);
+}
+
+.status-msg.success {
+  color: var(--primary-color);
+}
+
+/* ============================================
+   LOGIN SECTION
+   ============================================ */
+.login-section {
+  text-align: center;
+  max-width: 500px;
+  margin: 80px auto;
+}
+
+.login-section h2 {
+  color: #fff;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.login-section p {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.login-input {
+  padding: 12px;
+  width: 100%;
+  background: #222;
+  color: #00ff41;
+  border: 1px solid #00ff41;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.access-btn {
+  padding: 12px 40px;
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  font-family: "Fira Code", monospace;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1rem;
+}
+
+.access-btn:hover {
+  background: var(--primary-color);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+/* ============================================
+   LEADERBOARD PANEL (SIDEBAR)
+   ============================================ */
+.leaderboard-panel {
+  min-width: 300px;
+  background: var(--bg-secondary);
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.leaderboard-panel h3 {
+  color: var(--primary-color);
+  font-family: "Fira Code", monospace;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.leaderboard-panel li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #222;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  list-style: none;
+}
+
+.leaderboard-panel li:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-panel li.current-team {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* ============================================
+   LEADERBOARD TABLE (FULL PAGE)
+   ============================================ */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  text-align: left;
+  padding: 15px;
+  border-bottom: 1px solid #333;
+}
+
+.leaderboard-table th {
+  font-family: "Fira Code", monospace;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard-table tr:hover {
+  background-color: rgba(0, 255, 65, 0.05);
+}
+
+.leaderboard-table .rank {
+  font-weight: bold;
+  color: #ffaa00;
+}
+
+.leaderboard-table tr.current-user-row {
+  background-color: rgba(0, 255, 65, 0.1);
+}
+
+.leaderboard-table tr.current-user-row td {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.ctf-footer {
+  text-align: center;
+  margin-top: 80px;
+  padding: 20px 0;
+  color: var(--text-secondary);
+  font-family: "Fira Code", monospace;
+  font-size: 0.9rem;
+  border-top: 1px solid #222;
+}
+
+/* ============================================
+   DASHBOARD TOP SECTION
+   ============================================ */
+.dashboard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.dashboard-top .intro-panel {
+  flex: 2;
+  margin-bottom: 0;
+}
+
+.dashboard-top .leaderboard-panel {
+  flex: 1;
+}
+
+/* ============================================
+   SCANLINE ANIMATION (Overlay)
+   ============================================ */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.scanline-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 255, 65, 0.08);
+  z-index: 9999;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+}
+
+/* ============================================
+   PULSE ANIMATION for status
+   ============================================ */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================
+   BACK LINK
+   ============================================ */
+.back-link {
+  color: #00d2ff;
+  text-decoration: none;
+  font-family: "Fira Code", monospace;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--primary-color);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .glitch {
+    font-size: 2.2rem;
+  }
+
+  .challenges-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-top {
+    flex-direction: column;
+  }
+
+  .leaderboard-panel {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .glitch {
+    font-size: 1.6rem;
+  }
+
+  .ctf-app {
+    padding: 20px 12px;
+  }
+
+  .challenge-card {
+    padding: 18px;
+  }
+}
+
+/* ============================================
+   AUTH PAGE
+   ============================================ */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 20px;
+}
+
+.auth-card {
+  background: var(--bg-secondary);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 0 40px rgba(0, 255, 65, 0.05),
+    0 0 80px rgba(0, 255, 65, 0.02);
+}
+
+.auth-title {
+  font-family: "Fira Code", monospace;
+  color: #fff;
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.auth-subtitle {
+  font-family: "Fira Code", monospace;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.auth-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.auth-toggle-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: "Fira Code", monospace;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #444;
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.auth-toggle-btn.active {
+  border-color: var(--primary-color);
+  color: #000;
+  background: var(--primary-color);
+}
+
+.auth-toggle-btn:not(.active):hover {
+  border-color: rgba(0, 255, 65, 0.4);
+  color: var(--text-primary);
+}
+
+.auth-error {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(255, 0, 60, 0.15);
+  border: 1px solid rgba(255, 0, 60, 0.4);
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-family: "Fira Code", monospace;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-field label {
+  font-family: "Fira Code", monospace;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.auth-input {
+  background: #0a0a0a;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.2);
+}
+
+.auth-input::placeholder {
+  color: #555;
+}
+
+.auth-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-wrapper .auth-input {
+  padding-right: 60px;
+}
+
+.auth-eye-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: "Fira Code", monospace;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  letter-spacing: 1px;
+}
+
+.auth-eye-btn:hover {
+  color: var(--primary-color);
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+}
+
+.auth-info-badge {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid #333;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-family: "Fira Code", monospace;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  gap: 12px;
+}
+
+.auth-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #333;
+}
+
+.auth-divider-text {
+  font-family: "Fira Code", monospace;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.auth-google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  font-size: 0.95rem;
+}
+
+.auth-google-btn:hover {
+  background: #222;
+  border-color: rgba(0, 255, 65, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+}
+
+/* ============================================
+   NOT REGISTERED GATE
+   ============================================ */
+.gate-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.gate-error {
+  font-family: "Fira Code", monospace;
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(255, 0, 60, 0.5);
+  animation: glitch 500ms infinite;
+}
+
+.gate-message {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  max-width: 500px;
+}
+
+.gate-btn {
+  padding: 12px 30px;
+  background: transparent;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  font-family: "Fira Code", monospace;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.gate-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 18px;
+  }
+
+  .auth-toggle {
+    flex-direction: column;
+  }
+
+  .gate-error {
+    font-size: 1.4rem;
+  }
+}
