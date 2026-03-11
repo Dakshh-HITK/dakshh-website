@@ -150,7 +150,7 @@ export default function AdminParticipantsClient({
     <>
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
-          <h2 className="hand-drawn-title text-white text-xl sm:text-2xl">
+          <h2 className="hand-drawn-title admin-section-title text-white">
             Participants
           </h2>
           <input

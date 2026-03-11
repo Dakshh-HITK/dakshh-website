@@ -483,7 +483,7 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
       )}
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-xl sm:text-2xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Events
         </h2>
         {!loading && events.length > 0 && (
@@ -600,7 +600,7 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
           <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/80 py-4 sm:py-8 px-3 sm:px-4">
             <div className="flex min-h-full items-start justify-center">
               <HandDrawnCard className="p-4 sm:p-6 md:p-8 max-w-2xl w-full my-4 sm:my-8 mx-2 sm:mx-0">
-                <h2 className="hand-drawn-title text-white text-2xl mb-4">
+                <h2 className="hand-drawn-title admin-section-title text-white mb-4">
                   Edit event
                 </h2>
                 <div className="max-h-[calc(100vh-12rem)] overflow-y-auto pr-2 -mr-2">

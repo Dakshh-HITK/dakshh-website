@@ -484,7 +484,7 @@ export default function AdminRegistrationsClient({
         />
       )}
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-xl sm:text-2xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Registrations
         </h2>
         <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4">

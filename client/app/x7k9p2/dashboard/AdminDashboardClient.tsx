@@ -143,7 +143,7 @@ export default function AdminDashboardClient() {
 
       
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           User signups (last 30 days)
         </h2>
         <div className="min-h-[180px]">
@@ -186,7 +186,7 @@ export default function AdminDashboardClient() {
 
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Registration breakdown
         </h2>
         <div className="flex flex-wrap gap-3 sm:gap-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
@@ -212,7 +212,7 @@ export default function AdminDashboardClient() {
       </HandDrawnCard>
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Registrations (last 30 days)
         </h2>
         <div className="min-h-[180px]">
@@ -255,7 +255,7 @@ export default function AdminDashboardClient() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
             Events by category
           </h2>
           <div className="min-h-[180px]">
@@ -289,7 +289,7 @@ export default function AdminDashboardClient() {
         </HandDrawnCard>
 
         <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
             Registrations per event (top 10)
           </h2>
           <div className="min-h-[180px]">
@@ -316,7 +316,7 @@ export default function AdminDashboardClient() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
             Users by role
           </h2>
           <div className="min-h-[180px]">
@@ -350,7 +350,7 @@ export default function AdminDashboardClient() {
         </HandDrawnCard>
 
         <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
             Admin users by role
           </h2>
           <div className="min-h-[180px]">
@@ -385,7 +385,7 @@ export default function AdminDashboardClient() {
       </div>
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Check-in overview
         </h2>
         <div className="h-[220px] sm:h-[280px] md:h-[300px] w-full">
@@ -416,7 +416,7 @@ export default function AdminDashboardClient() {
       </HandDrawnCard>
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
             Among Us game stats
           </h2>
           <div className="flex flex-wrap gap-3 sm:gap-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
@@ -441,7 +441,7 @@ export default function AdminDashboardClient() {
         </HandDrawnCard>
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-          <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
             Top 10 leaderboard (Among Us)
           </h2>
           <div className="space-y-2">
@@ -468,7 +468,7 @@ export default function AdminDashboardClient() {
 
 
       <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-        <h2 className="hand-drawn-title text-white text-lg sm:text-xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Event breakdown
         </h2>
         <div className="flex flex-wrap gap-3 sm:gap-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">

@@ -543,7 +543,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
   return (
     <>
       <HandDrawnCard className="p-4 sm:p-6 md:p-8" overflowVisible>
-        <h2 className="hand-drawn-title text-white text-xl sm:text-2xl mb-3 sm:mb-4">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Compose Email
         </h2>
 
@@ -935,7 +935,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
       {aiModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/80">
           <div className="w-full max-w-md hand-drawn-card p-4 sm:p-6 mx-2">
-            <h3 className="hand-drawn-title text-white text-xl mb-2">
+            <h3 className="hand-drawn-title admin-section-title text-white mb-2">
               Dakshh AI
             </h3>
             <p className="text-white/70 text-sm mb-4">
@@ -975,7 +975,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
       {placeholderSettingsOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/80">
           <div className="w-full max-w-lg hand-drawn-card p-4 sm:p-6 max-h-[85vh] flex flex-col mx-2 sm:mx-0">
-            <h3 className="hand-drawn-title text-white text-xl mb-1">
+            <h3 className="hand-drawn-title admin-section-title text-white mb-1">
               Placeholder settings
             </h3>
             <p className="text-white/60 text-sm mb-4">
@@ -1088,7 +1088,7 @@ export default function AdminMailClient({ canSend }: AdminMailClientProps) {
           <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80">
             <div className="w-full max-w-2xl hand-drawn-card p-4 sm:p-6 max-h-[90vh] flex flex-col mx-2 sm:mx-0">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="hand-drawn-title text-white text-xl">
+                <h3 className="hand-drawn-title admin-section-title text-white">
                   Email preview
                 </h3>
                 <button

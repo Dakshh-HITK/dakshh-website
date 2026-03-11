@@ -32,7 +32,7 @@ export default async function AdminSeedPage() {
       <div className="relative z-10 min-h-screen pt-16 sm:pt-20 md:pt-24 px-3 sm:px-4 md:px-6 pb-6 sm:pb-10">
         <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 w-full min-w-0">
           <HandDrawnCard className="p-4 sm:p-6 md:p-8">
-            <h1 className="hand-drawn-title text-white text-2xl sm:text-3xl mb-2">
+            <h1 className="hand-drawn-title admin-dashboard-title text-white mb-2">
               Seed Controls
             </h1>
             <p className="text-cyan text-sm">

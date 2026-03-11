@@ -91,7 +91,7 @@ export default function TeamDetailsModal({
         <HandDrawnCard className="bg-[#1a1a1a] border-2 border-white/80 p-4 sm:p-6 md:p-8 max-h-[90vh] flex flex-col">
           {/* Header */}
           <div className="text-center mb-4 sm:mb-6 shrink-0">
-            <h2 className="hand-drawn-title text-2xl sm:text-3xl md:text-4xl text-cyan mb-2">
+            <h2 className="hand-drawn-title admin-dashboard-title text-cyan mb-2">
               {team.teamName || "Unnamed Team"}
             </h2>
             <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20">
