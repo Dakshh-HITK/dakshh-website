@@ -7,8 +7,8 @@ export function GET() {
   const scope = `${base}/`;
 
   const manifest = {
-    name: "DAKSHH Admin",
-    short_name: "Admin",
+    name: "Dakshh Admin",
+    short_name: "Dakshh",
     description: "Admin dashboard for DAKSHH Tech Fest",
     id: base,
     start_url: base,

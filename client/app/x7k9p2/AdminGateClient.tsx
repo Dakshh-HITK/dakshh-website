@@ -1,18 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import { DotOrbit } from "@paper-design/shaders-react";
 import HandDrawnCard from "@/app/components/HandDrawnCard";
 import { getAdminBasePath } from "@/lib/admin-config";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
 
 export default function AdminGateClient() {
   const [masterKey, setMasterKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
   const router = useRouter();
   const basePath = getAdminBasePath();
+
+  useEffect(() => {
+    setIsStandalone(
+      typeof window !== "undefined" &&
+        window.matchMedia("(display-mode: standalone)").matches
+    );
+    setIsIOS(
+      typeof navigator !== "undefined" &&
+        /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+        !(navigator as unknown as { MSStream?: boolean }).MSStream
+    );
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +70,16 @@ export default function AdminGateClient() {
       setLoading(false);
     }
   };
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    await deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") setDeferredPrompt(null);
+  };
+
+  const showInstallButton =
+    !isStandalone && (deferredPrompt !== null || isIOS);
 
   return (
     <div className="w-full min-h-screen relative" data-main-content>
@@ -113,6 +151,33 @@ export default function AdminGateClient() {
                 Login here
               </Link>
             </p>
+
+            {showInstallButton && (
+              <div className="mt-6 pt-6 border-t border-white/20">
+                {deferredPrompt ? (
+                  <button
+                    type="button"
+                    onClick={handleInstall}
+                    className="hand-drawn-button w-full py-3 flex items-center justify-center gap-2"
+                    style={{ background: "rgba(0, 200, 200, 0.2)" }}
+                  >
+                    <Download className="w-5 h-5" />
+                    Install app
+                  </button>
+                ) : (
+                  <p className="text-cyan/90 text-sm text-center">
+                    To install: tap Share{" "}
+                    <span className="inline-block" aria-hidden>
+                      ⎋
+                    </span>{" "}
+                    then &quot;Add to Home Screen&quot;{" "}
+                    <span className="inline-block" aria-hidden>
+                      ➕
+                    </span>
+                  </p>
+                )}
+              </div>
+            )}
           </HandDrawnCard>
         </div>
       </div>
