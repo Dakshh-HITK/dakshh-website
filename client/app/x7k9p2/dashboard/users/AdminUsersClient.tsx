@@ -171,8 +171,8 @@ export default function AdminUsersClient({ canWrite = true }: { canWrite?: boole
   return (
     <>
       {canWrite && (
-        <HandDrawnCard className="p-6 sm:p-8">
-          <h2 className="hand-drawn-title text-white text-2xl mb-3">
+        <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+          <h2 className="hand-drawn-title admin-section-title text-white mb-3">
             Invite User
           </h2>
           <form onSubmit={handleInvite} className="space-y-4">
@@ -244,12 +244,12 @@ export default function AdminUsersClient({ canWrite = true }: { canWrite?: boole
         </HandDrawnCard>
       )}
 
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-2xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Admin Users
         </h2>
         {!loading && users.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-4 p-3 rounded bg-black/20 border border-white/10">
+          <div className="flex flex-wrap gap-2 sm:gap-4 mb-3 sm:mb-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
             <div className="text-cyan font-semibold">
               Total: <span className="text-white">{users.length}</span>
             </div>
@@ -278,8 +278,8 @@ export default function AdminUsersClient({ canWrite = true }: { canWrite?: boole
         ) : users.length === 0 ? (
           <p className="text-white/70">No admin users yet.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[600px]">
               <thead>
                 <tr className="border-b-2 border-white/30">
                   <SortTh col="email" label="Email" />
@@ -345,7 +345,7 @@ export default function AdminUsersClient({ canWrite = true }: { canWrite?: boole
                     {canWrite && (
                       <td className="py-2">
                         {editingId === u.id ? (
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <button
                               type="button"
                               onClick={() => handleUpdate(u.id)}
@@ -363,7 +363,7 @@ export default function AdminUsersClient({ canWrite = true }: { canWrite?: boole
                             </button>
                           </div>
                         ) : (
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <button
                               type="button"
                               onClick={() => {

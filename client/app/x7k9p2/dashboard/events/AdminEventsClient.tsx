@@ -263,7 +263,7 @@ function EventFormFields({
       <div>
         <label className="block text-cyan text-sm font-semibold mb-2">POCs</label>
         {form.pocs.map((p, i) => (
-          <div key={i} className="flex gap-2 mb-2">
+          <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2">
             <input
               type="text"
               value={p.name}
@@ -459,7 +459,7 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
   return (
     <>
       {canWrite && (
-        <HandDrawnCard className="p-6 sm:p-8">
+        <HandDrawnCard className="p-4 sm:p-6 md:p-8">
           <button
             type="button"
             onClick={() => setCreateOpen(!createOpen)}
@@ -482,12 +482,12 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
         </HandDrawnCard>
       )}
 
-      <HandDrawnCard className="p-6 sm:p-8">
-        <h2 className="hand-drawn-title text-white text-2xl mb-4">
+      <HandDrawnCard className="p-4 sm:p-6 md:p-8">
+        <h2 className="hand-drawn-title admin-section-title text-white mb-3 sm:mb-4">
           Events
         </h2>
         {!loading && events.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-4 p-3 rounded bg-black/20 border border-white/10">
+          <div className="flex flex-wrap gap-2 sm:gap-4 mb-3 sm:mb-4 p-2.5 sm:p-3 rounded bg-black/20 border border-white/10">
             <div className="text-cyan font-semibold">
               Total: <span className="text-white">{events.length}</span>
             </div>
@@ -510,8 +510,8 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
         ) : events.length === 0 ? (
           <p className="text-white/70">No events yet.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
               <thead>
                 <tr className="border-b-2 border-white/30">
                   <SortTh col="eventName" label="Event" />
@@ -541,7 +541,7 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
                     {canWrite && (
                       <td className="py-2">
                         {editingId === ev.id && editForm ? (
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <button
                               type="button"
                               onClick={() => handleUpdate()}
@@ -562,7 +562,7 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
                             </button>
                           </div>
                         ) : (
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <button
                               type="button"
                               onClick={() => {
@@ -597,10 +597,10 @@ export default function AdminEventsClient({ canWrite }: AdminEventsClientProps) 
       {editingId && editForm &&
         typeof document !== "undefined" &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/80 py-8 px-4">
+          <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/80 py-4 sm:py-8 px-3 sm:px-4">
             <div className="flex min-h-full items-start justify-center">
-              <HandDrawnCard className="p-6 sm:p-8 max-w-2xl w-full my-8">
-                <h2 className="hand-drawn-title text-white text-2xl mb-4">
+              <HandDrawnCard className="p-4 sm:p-6 md:p-8 max-w-2xl w-full my-4 sm:my-8 mx-2 sm:mx-0">
+                <h2 className="hand-drawn-title admin-section-title text-white mb-4">
                   Edit event
                 </h2>
                 <div className="max-h-[calc(100vh-12rem)] overflow-y-auto pr-2 -mr-2">

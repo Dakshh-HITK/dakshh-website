@@ -177,6 +177,36 @@ body {
   width: 100%;
 }
 
+/* Admin dashboard title - smaller on phones */
+.admin-dashboard-title {
+  font-size: 2rem; /* 14px */
+}
+@media (min-width: 640px) {
+  .admin-dashboard-title {
+    font-size: 3rem; /* 24px */
+  }
+}
+@media (min-width: 768px) {
+  .admin-dashboard-title {
+    font-size: 5rem; /* 30px */
+  }
+}
+
+/* Admin section title - responsive h2 within admin pages */
+.admin-section-title {
+  font-size: 1rem;
+}
+@media (min-width: 640px) {
+  .admin-section-title {
+    font-size: 1.25rem;
+  }
+}
+@media (min-width: 768px) {
+  .admin-section-title {
+    font-size: 1.5rem;
+  }
+}
+
 .hand-drawn-text {
   font-weight: 300;
   /* Removed fixed font-size to allow Tailwind responsive classes to work */

@@ -2,10 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Download } from "lucide-react";
 import type { AdminSessionPayload } from "@/lib/admin-session";
 import { getAdminBasePath } from "@/lib/admin-config";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
 
 function hasPermission(
   session: AdminSessionPayload,
@@ -37,6 +42,38 @@ export default function AdminDashboardNav({
   const basePath = getAdminBasePath();
   const base = `/${basePath}/dashboard`;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    setIsStandalone(
+      typeof window !== "undefined" &&
+        window.matchMedia("(display-mode: standalone)").matches
+    );
+    setIsIOS(
+      typeof navigator !== "undefined" &&
+        /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+        !(navigator as unknown as { MSStream?: boolean }).MSStream
+    );
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    await deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") setDeferredPrompt(null);
+  };
+
+  const showInstallButton =
+    !isStandalone && (deferredPrompt !== null || isIOS);
 
   const navItems: { href: string; label: string; show: boolean }[] = [
     { href: base, label: "Home", show: true },
@@ -75,10 +112,10 @@ export default function AdminDashboardNav({
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/20">
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
+        <div className="flex items-center justify-between gap-2 min-w-0">
           {/* Logo */}
-          <Link href={base} className="text-cyan font-bold text-lg shrink-0 uppercase tracking-wider">
+          <Link href={base} className="text-cyan font-bold text-base sm:text-lg shrink-0 uppercase tracking-wider truncate">
             {session.role}
           </Link>
 
@@ -100,11 +137,27 @@ export default function AdminDashboardNav({
           </div>
 
           {/* Desktop right side */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
-            <span className="text-white/60 text-sm truncate max-w-[180px]" title={session.email}>
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0 min-w-0">
+            <span className="text-white/60 text-xs xl:text-sm truncate max-w-[120px] xl:max-w-[180px]" title={session.email}>
               {session.email}
               {session.isMaster && " (Master)"}
             </span>
+            {showInstallButton &&
+              (deferredPrompt ? (
+                <button
+                  type="button"
+                  onClick={handleInstall}
+                  className="hand-drawn-button py-1.5 px-3 text-sm whitespace-nowrap flex items-center gap-1.5"
+                  style={{ background: "rgba(0, 200, 200, 0.2)" }}
+                >
+                  <Download className="w-4 h-4" />
+                  Install
+                </button>
+              ) : (
+                <span className="text-cyan/80 text-xs px-2" title="Tap Share → Add to Home Screen">
+                  Install via Share
+                </span>
+              ))}
             <form action="/api/admin-panel/logout" method="POST">
               <button
                 type="submit"
@@ -129,7 +182,7 @@ export default function AdminDashboardNav({
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="lg:hidden border-t border-white/10 bg-black/95 px-4 py-3 flex flex-col gap-1">
+        <div className="lg:hidden border-t border-white/10 bg-black/95 px-3 sm:px-4 py-3 flex flex-col gap-1 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -146,6 +199,26 @@ export default function AdminDashboardNav({
           ))}
 
           <div className="my-2 border-t border-white/10" />
+
+          {showInstallButton &&
+            (deferredPrompt ? (
+              <button
+                type="button"
+                onClick={() => {
+                  handleInstall();
+                  setMenuOpen(false);
+                }}
+                className="hand-drawn-button py-2 px-3 text-sm w-full flex items-center justify-center gap-2"
+                style={{ background: "rgba(0, 200, 200, 0.2)" }}
+              >
+                <Download className="w-4 h-4" />
+                Install app
+              </button>
+            ) : (
+              <p className="text-cyan/80 text-xs px-3 py-2">
+                Install: Share → Add to Home Screen
+              </p>
+            ))}
 
           <span className="text-white/50 text-xs px-3 pb-1">
             {session.email}

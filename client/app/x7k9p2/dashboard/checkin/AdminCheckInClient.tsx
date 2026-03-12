@@ -247,8 +247,8 @@ export default function AdminCheckInClient({
   const dialog =
     isMounted && dialogOpen && activeEvent
       ? createPortal(
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
-            <div className="w-full max-w-lg rounded-xl border-2 border-white/20 bg-black/85 p-4 sm:p-5">
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:px-4">
+            <div className="w-full max-w-lg rounded-xl border-2 border-white/20 bg-black/85 p-3 sm:p-5 mx-2 sm:mx-0">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-white text-lg font-semibold">Scan QR</h3>
@@ -351,8 +351,8 @@ export default function AdminCheckInClient({
       : null;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
+    <div className="overflow-x-auto -mx-2 sm:mx-0">
+      <table className="w-full text-left text-xs sm:text-sm min-w-[280px]">
         <thead>
           <tr className="border-b-2 border-white/30">
             <th className="py-2 text-cyan font-semibold">Event</th>
