@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { isHiddenRegisterEvent } from "@/constants/hidden-register-events";
 import Event, { IEventDocument } from "@/lib/models/Events";
 import Registration from "@/lib/models/Registrations";
 import Team, { ITeamDocument } from "@/lib/models/Team";
@@ -41,7 +42,8 @@ export async function POST(
         //         { status: 400 }
         //     );
         // }
-        if (!event.isActive) {
+        const allowHiddenRegister = isHiddenRegisterEvent(event.eventName);
+        if (!event.isActive && !allowHiddenRegister) {
             return NextResponse.json({ error: "This event is not accepting registrations right now" }, { status: 400 });
         }
         if (String(event._id) !== id) {
