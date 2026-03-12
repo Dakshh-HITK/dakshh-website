@@ -1,5 +1,4 @@
 import { Resend } from "resend";
-import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
 import { EmailTemplate } from "@/components/email-template";
 import { OtpEmailTemplate } from "@/components/otp-email-template";
@@ -9,24 +8,7 @@ import { CustomMailTemplate } from "@/components/custom-mail-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const onboardingFrom = "Dakshh Team <onboarding@dakshh-hitk.com>";
-
-/* ── SMTP transporter for mass mailing (Gmail app password) ── */
-/* pool: true  → reuses a single authenticated connection for multiple emails
-   instead of opening (and authenticating) a new connection per sendMail call.
-   This prevents the "454-4.7.0 Too many login attempts" error.            */
-const smtpTransporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  pool: true,
-  maxConnections: 2,
-  maxMessages: 200,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-const smtpFrom = `Dakshh Team <${process.env.SMTP_USER}>`;
+const announcementsFrom = "Dakshh Team <announcements@dakshh-hitk.com>";
 
 export async function sendWelcomeEmail(to: string) {
   return resend.emails.send({
@@ -90,18 +72,17 @@ export async function sendSeminarConfirmationEmail(
   });
 }
 
-/* ── Mass mail via SMTP (Gmail) instead of Resend ── */
+/* ── Mass / custom mail via Resend (announcements@) ── */
 export async function sendCustomMail(
   to: string[],
   subject: string,
   htmlBody: string
 ) {
   const html = await render(CustomMailTemplate({ htmlContent: htmlBody }));
-  const info = await smtpTransporter.sendMail({
-    from: smtpFrom,
-    to: to.join(", "),
+  return resend.emails.send({
+    from: announcementsFrom,
+    to,
     subject,
     html,
   });
-  return { data: { id: info.messageId }, error: null };
 }

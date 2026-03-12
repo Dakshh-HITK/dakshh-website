@@ -1,7 +1,6 @@
 import connect from "@/lib/mongoose";
 import Event from "@/lib/models/Events";
 import Registration from "@/lib/models/Registrations";
-import Team from "@/lib/models/Team";
 import User from "@/lib/models/User";
 import { parseAndVerifyProfileQrPayload } from "@/lib/qr-token";
 
@@ -79,22 +78,12 @@ export async function performCheckIn(
     };
   }
 
-  const teamIds = await Team.find({
-    eventId,
-    $or: [
-      { teamLeader: attendeeUserId },
-      { team: attendeeUserId },
-    ],
-  })
-    .select("_id")
-    .lean();
-
+  // Look up registration by the individual participant only.
+  // Each team member has their own Registration document, so querying by
+  // teamId would risk matching (and checking-in) a different team member.
   const registration = await Registration.findOne({
     eventId,
-    $or: [
-      { participant: attendeeUserId },
-      { teamId: { $in: teamIds.map((t) => t._id) } },
-    ],
+    participant: attendeeUserId,
   });
 
   const attendeeName = attendee?.fullName || attendee?.username || "Participant";
