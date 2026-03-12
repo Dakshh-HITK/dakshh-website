@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CountdownTimerProps {
   targetDate: Date;
+  eventEndDate?: Date;
   title?: string;
 }
 
@@ -15,21 +16,169 @@ interface TimeLeft {
   seconds: number;
 }
 
-function calculateTimeLeft(targetDate: Date): TimeLeft {
-  const difference = targetDate.getTime() - new Date().getTime();
-
-  if (difference <= 0) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-  }
-
+function calculateTimeLeft(d: Date): TimeLeft {
+  const diff = d.getTime() - Date.now();
+  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   return {
-    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((difference / 1000 / 60) % 60),
-    seconds: Math.floor((difference / 1000) % 60),
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / 1000 / 60) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
   };
 }
 
+function isOver(d: Date) {
+  return d.getTime() - Date.now() <= 0;
+}
+
+// ── Live view — no box, just ambient text + mini countdown ────────────────────
+function LiveView({ endDate }: { endDate: Date }) {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(endDate));
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(endDate));
+    }, 1000);
+    return () => clearInterval(t);
+  }, [endDate]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+      className="flex flex-col items-center gap-3"
+    >
+      {/* Live pill */}
+      <div className="flex items-center gap-2">
+        <motion.span
+          animate={{ opacity: [1, 0.25, 1] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          className="w-2 h-2 rounded-full bg-green-400 inline-block"
+          style={{ boxShadow: "0 0 8px #4ade80" }}
+        />
+        <span
+          className="text-xs font-semibold uppercase tracking-[0.2em]"
+          style={{ color: "rgba(255,255,255,0.4)" }}
+        >
+          Crew Status: ACTIVE
+        </span>
+      </div>
+
+      {/* "DAKSHH ends in" label */}
+      <p
+        className="text-sm sm:text-base font-medium"
+        style={{ color: "rgba(255,255,255,0.35)", letterSpacing: "0.05em" }}
+      >
+        DON'T BE SUS. JOIN NOW!!
+      </p>
+
+      {/* Mini digit row — no box, just glowing numbers */}
+      <div className="flex items-baseline gap-1 sm:gap-2">
+        {[
+          { value: timeLeft.days,    label: "d" },
+          { value: timeLeft.hours,   label: "h" },
+          { value: timeLeft.minutes, label: "m" },
+          { value: timeLeft.seconds, label: "s" },
+        ].map(({ value, label }, i) => (
+          <span key={i} className="flex items-baseline gap-0.5">
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={value}
+                initial={{ y: -8, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 8, opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="text-xl sm:text-2xl md:text-3xl font-bold tabular-nums"
+                style={{
+                  fontFamily: "var(--font-space-grotesk), sans-serif",
+                  color: "#ffffff",
+                  textShadow: "0 0 14px rgba(255,255,255,0.25)",
+                }}
+              >
+                {value.toString().padStart(2, "0")}
+              </motion.span>
+            </AnimatePresence>
+            <span
+              className="text-xs sm:text-sm font-medium"
+              style={{ color: "rgba(255,255,255,0.3)" }}
+            >
+              {label}
+            </span>
+            {i < 3 && (
+              <motion.span
+                animate={{ opacity: [1, 0.2, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                className="text-sm sm:text-base font-light mx-0.5"
+                style={{ color: "rgba(255,255,255,0.2)" }}
+              >
+                :
+              </motion.span>
+            )}
+          </span>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// ── Thank-you view ────────────────────────────────────────────────────────────
+function ThankYouView() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="text-center py-4"
+    >
+      <p
+        className="text-sm uppercase tracking-[0.25em] font-medium mb-3"
+        style={{ color: "rgba(255,255,255,0.35)" }}
+      >
+        Heritage Institute of Technology · 2026
+      </p>
+
+      <h3
+        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2"
+        style={{
+          fontFamily: "var(--font-space-grotesk), sans-serif",
+          background: "linear-gradient(90deg, #FFD700, #ffffff, #00CED1)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}
+      >
+        Thank you for joining us
+      </h3>
+
+      <motion.p
+        className="text-lg sm:text-xl md:text-2xl font-semibold"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        style={{
+          fontFamily: "var(--font-space-grotesk), sans-serif",
+          color: "rgba(255,255,255,0.5)",
+        }}
+      >
+        at <span style={{ color: "#FFD700" }}>DAKSHH&apos;26</span>
+      </motion.p>
+
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+        className="h-px w-32 mx-auto mt-5"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(255,215,0,0.5), transparent)",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+// ── Pre-event countdown digit ─────────────────────────────────────────────────
 function TimeUnit({
   value,
   label,
@@ -47,22 +196,25 @@ function TimeUnit({
     >
       <div className="flex flex-col items-center">
         <div className="relative">
-          <div className="bg-black/80 border-2 border-red rounded-lg px-3 py-2 sm:px-4 sm:py-3 md:px-5 md:py-4 min-w-17.5 sm:min-w-20 md:min-w-22.5 lg:min-w-25">
-            <motion.span
-              key={value}
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white block text-center hand-drawn-title"
-              style={{
-                textShadow:
-                  "0 0 10px rgba(255, 70, 85, 0.8), 0 0 20px rgba(255, 70, 85, 0.5)",
-                fontWeight: 900,
-              }}
-            >
-              {value.toString().padStart(2, "0")}
-            </motion.span>
+          <div className="bg-black/80 border-2 border-red rounded-lg px-3 py-2 sm:px-4 sm:py-3 md:px-5 md:py-4 min-w-[3.5rem] sm:min-w-20 md:min-w-[5.5rem] lg:min-w-25">
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={value}
+                initial={{ y: -14, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 14, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white block text-center hand-drawn-title tabular-nums"
+                style={{
+                  textShadow:
+                    "0 0 10px rgba(255,70,85,0.8), 0 0 20px rgba(255,70,85,0.5)",
+                  fontWeight: 900,
+                }}
+              >
+                {value.toString().padStart(2, "0")}
+              </motion.span>
+            </AnimatePresence>
           </div>
-          {/* Decorative corner pieces */}
           <div className="absolute -top-1 -left-1 w-2 h-2 bg-cyan" />
           <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan" />
           <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-cyan" />
@@ -75,9 +227,7 @@ function TimeUnit({
       {showColonAfter && (
         <span
           className="text-red text-2xl sm:text-3xl md:text-4xl font-bold self-start pt-5 sm:pt-6 md:pt-7"
-          style={{
-            textShadow: "0 0 10px rgba(255, 70, 85, 0.6)",
-          }}
+          style={{ textShadow: "0 0 10px rgba(255,70,85,0.6)" }}
         >
           :
         </span>
@@ -86,99 +236,40 @@ function TimeUnit({
   );
 }
 
-function FloatingCrewmate({
-  delay,
-  side,
-}: {
-  delay: number;
-  side: "left" | "right";
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: side === "left" ? -50 : 50 }}
-      animate={{
-        opacity: [0.6, 1, 0.6],
-        x: 0,
-        y: [0, -10, 0],
-      }}
-      transition={{
-        opacity: { duration: 2, repeat: Infinity, delay },
-        y: { duration: 3, repeat: Infinity, delay, ease: "easeInOut" },
-      }}
-      className={`absolute top-1/2 -translate-y-1/2 ${side === "left" ? "left-0" : "right-0"} hidden sm:block`}
-      style={{
-        [side]: "-20px",
-        zIndex: 10,
-      }}
-    >
-      {/* <div className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
-        <Image
-          src={side === "left" ? "/peeking.png" : "/peeking2.png"}
-          alt="Crewmate"
-          fill
-          className="object-contain"
-          style={{
-            transform: side === "right" ? "scaleX(-1)" : undefined,
-          }}
-        />
-      </div> */}
-    </motion.div>
-  );
-}
-
+// ── Root export ───────────────────────────────────────────────────────────────
 export default function CountdownTimer({
   targetDate,
+  eventEndDate,
   title = "MISSION STARTS IN",
 }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(
-    calculateTimeLeft(targetDate),
-  );
-  const [isExpired, setIsExpired] = useState(false);
+  const effectiveEndDate = eventEndDate ?? new Date("2026-03-14T21:00:00");
+
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(targetDate));
+  const [started, setStarted] = useState(isOver(targetDate));
+  const [ended, setEnded] = useState(isOver(effectiveEndDate));
 
   useEffect(() => {
+    if (isOver(targetDate)) {
+      setStarted(true);
+      if (isOver(effectiveEndDate)) setEnded(true);
+      return;
+    }
     const timer = setInterval(() => {
-      const newTimeLeft = calculateTimeLeft(targetDate);
-      setTimeLeft(newTimeLeft);
-
-      if (
-        newTimeLeft.days === 0 &&
-        newTimeLeft.hours === 0 &&
-        newTimeLeft.minutes === 0 &&
-        newTimeLeft.seconds === 0
-      ) {
-        setIsExpired(true);
+      if (isOver(targetDate)) {
+        setStarted(true);
         clearInterval(timer);
+        return;
       }
+      setTimeLeft(calculateTimeLeft(targetDate));
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [targetDate, effectiveEndDate]);
 
-  if (isExpired) {
-    return (
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="relative hand-drawn-text"
-      >
-        <div className="bg-black/80 border-3 border-red rounded-2xl px-8 py-6 md:px-12 md:py-8">
-          <h3
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-red"
-            style={{
-              textShadow: "0 0 20px rgba(255, 70, 85, 0.8)",
-              fontFamily: "var(--font-space-grotesk), sans-serif",
-            }}
-          >
-            🚨 EVENT LIVE! 🚨
-          </h3>
-        </div>
-      </motion.div>
-    );
-  }
+  if (ended)   return <ThankYouView />;
+  if (started) return <LiveView endDate={effectiveEndDate} />;
 
   return (
     <div className="relative w-full max-w-4xl mx-auto px-4">
-      {/* Emergency meeting header */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -196,9 +287,8 @@ export default function CountdownTimer({
             className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-red uppercase tracking-wider"
             style={{
               textShadow:
-                "0 0 15px rgba(255, 70, 85, 0.7), 0 0 30px rgba(255, 70, 85, 0.4)",
+                "0 0 15px rgba(255,70,85,0.7), 0 0 30px rgba(255,70,85,0.4)",
               fontFamily: "var(--font-space-grotesk), sans-serif",
-              filter: "url(#wobbly-text)",
             }}
           >
             {title}
@@ -213,33 +303,17 @@ export default function CountdownTimer({
         </div>
       </motion.div>
 
-      {/* Timer display */}
-      <div className="relative">
-        <FloatingCrewmate delay={0} side="left" />
-        <FloatingCrewmate delay={1} side="right" />
-
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center items-start gap-2 sm:gap-3 md:gap-4 lg:gap-6"
-        >
-          <TimeUnit value={timeLeft.days} label="Days" showColonAfter />
-          <TimeUnit value={timeLeft.hours} label="Hours" showColonAfter />
-          <TimeUnit value={timeLeft.minutes} label="Mins" showColonAfter />
-          <TimeUnit value={timeLeft.seconds} label="Secs" />
-        </motion.div>
-      </div>
-
-      {/* Pulsing emergency line */}
-      {/* <motion.div
-        animate={{
-          boxShadow: ["0 0 5px #FF4655", "0 0 20px #FF4655", "0 0 5px #FF4655"],
-        }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-        className="absolute bottom-0 left-0 right-0 h-1 bg-red rounded-full mt-4"
-        style={{ maxWidth: "80%", margin: "1rem auto 0" }}
-      /> */}
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex justify-center items-start gap-2 sm:gap-3 md:gap-4 lg:gap-6"
+      >
+        <TimeUnit value={timeLeft.days}    label="Days"  showColonAfter />
+        <TimeUnit value={timeLeft.hours}   label="Hours" showColonAfter />
+        <TimeUnit value={timeLeft.minutes} label="Mins"  showColonAfter />
+        <TimeUnit value={timeLeft.seconds} label="Secs"  />
+      </motion.div>
     </div>
   );
 }
