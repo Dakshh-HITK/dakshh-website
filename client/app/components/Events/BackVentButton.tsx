@@ -7,7 +7,12 @@ const VENT_PNG = "/AmongUsVent.png";
 const VENT_GIF = "/AmongUsVent.gif";
 const GIF_PLAY_DURATION_MS = 2000;
 
-export default function BackVentButton() {
+interface BackVentButtonProps {
+  /** When set, navigate here instead of router.back() */
+  backTo?: string;
+}
+
+export default function BackVentButton({ backTo }: BackVentButtonProps = {}) {
   const router = useRouter();
   const [stage, setStage] = useState<"idle" | "hovering" | "clicked">("idle");
   const completeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -16,9 +21,13 @@ export default function BackVentButton() {
     if (stage === "clicked") return;
     setStage("clicked");
     completeTimeoutRef.current = setTimeout(() => {
-      router.back();
+      if (backTo) {
+        router.push(backTo);
+      } else {
+        router.back();
+      }
     }, GIF_PLAY_DURATION_MS);
-  }, [stage, router]);
+  }, [stage, router, backTo]);
 
   const handleMouseEnter = useCallback(() => {
     if (stage === "clicked") return;
