@@ -9,7 +9,7 @@ import {
   type RegisterInput,
 } from "@/lib/validations/auth";
 
-type AuthMode = "signin" | "signup" | "verify";
+type AuthMode = "signin" | "verify";
 const OTP_DEVICE_ID_KEY = "otp_device_id";
 
 function createFallbackDeviceId() {
@@ -44,24 +44,14 @@ function AuthForm() {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [signUpStep, setSignUpStep] = useState<1 | 2>(1);
 
   const [showSignInPassword, setShowSignInPassword] = useState(false);
-  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
   const [verificationEmail, setVerificationEmail] = useState("");
   const [verificationPassword, setVerificationPassword] = useState("");
   const [otpCode, setOtpCode] = useState("");
-
-  const [signUpData, setSignUpData] = useState<RegisterInput>({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
 
   const displayError =
     error ??
@@ -135,55 +125,8 @@ function AuthForm() {
     window.location.assign(callbackUrl);
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    const parsed = registerSchema.safeParse(signUpData);
-    if (!parsed.success) {
-      const issues = parsed.error.issues;
-      setError(issues[0]?.message ?? "Validation failed");
-      return;
-    }
-
-    setLoading(true);
-    const deviceId = getOrCreateDeviceId();
-
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: signUpData.username,
-        email: signUpData.email,
-        password: signUpData.password,
-        deviceId,
-      }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(data.error ?? "Registration failed");
-      return;
-    }
-
-    if (data.requiresVerification) {
-      setMode("verify");
-      setVerificationEmail(signUpData.email);
-      setVerificationPassword(signUpData.password);
-      setOtpCode("");
-      setError(
-        data.message ?? "OTP sent. Please verify your account."
-      );
-      return;
-    }
-
-    setMode("signin");
-    setSignInEmail(signUpData.email);
-    setError("Registration complete. Please sign in.");
-  };
+  // Sign-up handler preserved but disabled (signup UI removed)
+  // const handleSignUp = async (e: React.FormEvent) => { ... };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,47 +211,15 @@ function AuthForm() {
         <div className="auth-container">
           <div className="auth-card">
             <h2 className="auth-title">
-              {mode === "signin"
-                ? "Sign In"
-                : mode === "signup"
-                  ? "Create Account"
-                  : "Verify OTP"}
+              {mode === "signin" ? "Sign In" : "Verify OTP"}
             </h2>
             <p className="auth-subtitle">
               {mode === "signin"
                 ? "Welcome back, crewmate!"
-                : mode === "signup"
-                  ? "Join the DAKSHH crew"
-                  : "Complete your onboarding mission"}
+                : "Complete your onboarding mission"}
             </p>
 
-            {/* Mode toggle */}
-            <div className="auth-toggle">
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("signin");
-                  setError(null);
-                  setSignUpStep(1);
-                  setOtpCode("");
-                }}
-                className={`auth-toggle-btn ${mode === "signin" ? "active" : ""}`}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("signup");
-                  setError(null);
-                  setSignUpStep(1);
-                  setOtpCode("");
-                }}
-                className={`auth-toggle-btn ${mode === "signup" ? "active" : ""}`}
-              >
-                Sign Up
-              </button>
-            </div>
+
 
             {/* Error display */}
             {displayError && (
@@ -358,156 +269,6 @@ function AuthForm() {
                 >
                   {loading ? "Signing in..." : "Sign In"}
                 </button>
-              </form>
-            ) : mode === "signup" ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (signUpStep === 1) {
-                    const parsed = registerStep1Schema.safeParse({
-                      username: signUpData.username,
-                      email: signUpData.email,
-                    });
-                    if (!parsed.success) {
-                      const issues = parsed.error.issues;
-                      setError(issues[0]?.message ?? "Validation failed");
-                      return;
-                    }
-                    setError(null);
-                    setSignUpStep(2);
-                  } else {
-                    handleSignUp(e);
-                  }
-                }}
-                className="auth-form"
-              >
-                {signUpStep === 1 ? (
-                  <>
-                    <div className="auth-field">
-                      <label>Username</label>
-                      <input
-                        type="text"
-                        value={signUpData.username}
-                        onChange={(e) =>
-                          setSignUpData((p) => ({
-                            ...p,
-                            username: e.target.value,
-                          }))
-                        }
-                        className="auth-input"
-                        placeholder="crewmate123"
-                        required
-                        minLength={3}
-                        maxLength={30}
-                        autoComplete="username"
-                      />
-                    </div>
-                    <div className="auth-field">
-                      <label>Email</label>
-                      <input
-                        type="email"
-                        value={signUpData.email}
-                        onChange={(e) =>
-                          setSignUpData((p) => ({
-                            ...p,
-                            email: e.target.value,
-                          }))
-                        }
-                        className="auth-input"
-                        placeholder="crewmate@example.com"
-                        required
-                        autoComplete="email"
-                      />
-                    </div>
-                    <button type="submit" className="access-btn auth-submit">
-                      Next
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <div className="auth-info-badge">
-                      <span style={{ color: "var(--primary-color)", fontWeight: 600 }}>
-                        {signUpData.username}
-                      </span>
-                      <span style={{ margin: "0 6px" }}>•</span>
-                      <span>{signUpData.email}</span>
-                    </div>
-                    <div className="auth-field">
-                      <label>Password</label>
-                      <div className="auth-password-wrapper">
-                        <input
-                          type={showSignUpPassword ? "text" : "password"}
-                          value={signUpData.password}
-                          onChange={(e) =>
-                            setSignUpData((p) => ({
-                              ...p,
-                              password: e.target.value,
-                            }))
-                          }
-                          className="auth-input"
-                          placeholder="Min 8 characters"
-                          required
-                          minLength={8}
-                          autoComplete="new-password"
-                        />
-                        <button
-                          type="button"
-                          className="auth-eye-btn"
-                          onClick={() => setShowSignUpPassword((p) => !p)}
-                        >
-                          {showSignUpPassword ? "HIDE" : "SHOW"}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="auth-field">
-                      <label>Confirm Password</label>
-                      <div className="auth-password-wrapper">
-                        <input
-                          type={showConfirmPassword ? "text" : "password"}
-                          value={signUpData.confirmPassword}
-                          onChange={(e) =>
-                            setSignUpData((p) => ({
-                              ...p,
-                              confirmPassword: e.target.value,
-                            }))
-                          }
-                          className="auth-input"
-                          placeholder="••••••••"
-                          required
-                          autoComplete="new-password"
-                        />
-                        <button
-                          type="button"
-                          className="auth-eye-btn"
-                          onClick={() => setShowConfirmPassword((p) => !p)}
-                        >
-                          {showConfirmPassword ? "HIDE" : "SHOW"}
-                        </button>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setError(null);
-                          setSignUpStep(1);
-                        }}
-                        className="access-btn auth-submit"
-                        style={{ background: "#222", flex: 1 }}
-                      >
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="access-btn auth-submit"
-                        style={{ flex: 1 }}
-                      >
-                        {loading ? "Creating..." : "Create Account"}
-                      </button>
-                    </div>
-                  </>
-                )}
               </form>
             ) : (
               /* OTP Form */
