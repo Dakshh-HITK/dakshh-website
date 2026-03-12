@@ -17,10 +17,12 @@ function transformStr(rotate: string, mirror?: boolean) {
 
 export default function Crewmates() {
   return (
+    /* sus */
     <div
       className="absolute inset-0 min-h-[300vh] pointer-events-none z-0"
       data-crewmate-wrap
       aria-hidden="true"
+      data-flag-hehe="DAKSHH{1mp0$t3r_$p0tt3d}"
     >
       {MOBILE_CREWMATES.map((m, i) => (
         <div
