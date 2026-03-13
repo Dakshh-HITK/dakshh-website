@@ -30,11 +30,11 @@ export async function POST(req: NextRequest) {
 
     await connect();
 
-    // Fetch the challenge from DB (including flag)
-    const challenge = await CTFChallenge.findOne({ challengeId });
+    // Fetch the challenge from DB (including flag) and ensure it is enabled
+    const challenge = await CTFChallenge.findOne({ challengeId, enabled: true });
     if (!challenge) {
       return NextResponse.json(
-        { error: "Challenge not found." },
+        { error: "Challenge not found or is currently disabled." },
         { status: 404 }
       );
     }

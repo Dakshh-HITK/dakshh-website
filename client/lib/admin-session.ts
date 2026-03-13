@@ -57,6 +57,7 @@ export function parseSessionToken(token: string): AdminSessionPayload | null {
       role: data.role,
       permissions: Array.isArray(data.permissions) ? data.permissions : [],
       exp: data.exp ?? 0,
+      isMaster: data.isMaster === true,
     };
   } catch {
     return null;

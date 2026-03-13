@@ -113,7 +113,12 @@ export async function performCheckIn(
 
     registration.checkedIn = true;
     registration.checkedInAt = new Date();
-    registration.checkedInBy = checkedInBy as unknown as typeof registration.checkedInBy;
+    // Only set checkedInBy if it is a valid MongoDB ObjectId.
+    // The master session uses id="master" (not an ObjectId), which would
+    // cause a Mongoose CastError and return a 500 to the client.
+    if (/^[0-9a-f]{24}$/i.test(checkedInBy)) {
+      registration.checkedInBy = checkedInBy as unknown as typeof registration.checkedInBy;
+    }
     await registration.save();
 
     return {
