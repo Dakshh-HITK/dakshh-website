@@ -20,9 +20,11 @@ export async function GET(req: NextRequest) {
       .select("-__v")
       .lean();
 
-    // Fetch all enabled challenges (EXCLUDE the flag field!)
+    // Fetch only safe challenge fields (never expose flagHash)
     const challenges = await CTFChallenge.find({ enabled: true })
-      .select("-flagHash -__v")
+      .select(
+        "challengeId title category difficulty points description placeholder section sectionColor enabled createdAt updatedAt"
+      )
       .sort({ section: 1, challengeId: 1 })
       .lean();
 

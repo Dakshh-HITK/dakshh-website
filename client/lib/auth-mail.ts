@@ -28,6 +28,15 @@ export async function sendOtpEmail(to: string, otp: string) {
   });
 }
 
+export async function sendPasswordResetOtpEmail(to: string, otp: string) {
+  return resend.emails.send({
+    from: onboardingFrom,
+    to: [to],
+    subject: "Reset your Dakshh password",
+    react: OtpEmailTemplate({ otp }),
+  });
+}
+
 export async function sendAdminOtpEmail(to: string, otp: string) {
   return resend.emails.send({
     from: onboardingFrom,

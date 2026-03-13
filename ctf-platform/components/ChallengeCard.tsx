@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, FormEvent } from "react";
+import PenaltyModal from "./PenaltyModal";
 
 interface ChallengeProps {
   challenge: {
@@ -37,6 +38,8 @@ export default function ChallengeCard({
   const [statusType, setStatusType] = useState<"success" | "error" | "">("");
   const [submitting, setSubmitting] = useState(false);
   const [isSolved, setIsSolved] = useState(solved);
+  const [showPenaltyModal, setShowPenaltyModal] = useState(false);
+  const [penaltyCost, setPenaltyCost] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -52,11 +55,12 @@ export default function ChallengeCard({
     cardRef.current.style.background = "var(--bg-secondary)";
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: FormEvent, payPenalty: boolean = false) => {
+    if (e) e.preventDefault();
     if (!flag.trim() || isSolved) return;
 
     setSubmitting(true);
+    setStatus("");
     try {
       const res = await fetch("/api/submit", {
         method: "POST",
@@ -70,6 +74,7 @@ export default function ChallengeCard({
           userId,
           challengeId: challenge.challengeId,
           flag: flag.trim(),
+          payPenalty,
         }),
       });
 
@@ -80,13 +85,19 @@ export default function ChallengeCard({
         setStatusType("success");
         setFlag("");
         setIsSolved(true);
-        onSolve();
-      } else if (res.status === 429) {
-        setStatus(data.error);
-        setStatusType("error");
+        setShowPenaltyModal(false);
+        onSolve(); // Refresh scoreboard
+      } else if (data.requiresPenalty) {
+        setPenaltyCost(data.penaltyCost);
+        setShowPenaltyModal(true);
       } else {
         setStatus(data.message || data.error);
         setStatusType("error");
+        setShowPenaltyModal(false);
+        // If it was a penalty attempt that failed, we still want to refresh the leaderboard
+        if (payPenalty) {
+          onSolve();
+        }
       }
     } catch {
       setStatus("Network Error.");
@@ -98,6 +109,10 @@ export default function ChallengeCard({
 
   const difficultyLabel =
     challenge.difficulty === "ez-med" ? "Easy-Medium" : challenge.difficulty;
+
+  const penaltyRuleText = challenge.difficulty === "hard"
+    ? "⚠️ Penalty Rule: 10 failed attempts are free. Every subsequent attempt costs 100 points."
+    : "⚠️ Penalty Rule: 10 failed attempts are free. Every subsequent attempt costs 50 points.";
 
   return (
     <div
@@ -133,9 +148,12 @@ export default function ChallengeCard({
         {challenge.category}
       </p>
       <p className="desc">{challenge.description}</p>
+      <div className="penalty-warning">
+        {penaltyRuleText}
+      </div>
 
       {!isSolved ? (
-        <form className="submission-area" onSubmit={handleSubmit}>
+        <form className="submission-area" onSubmit={(e) => handleSubmit(e)}>
           <input
             type="text"
             className="flag-input"
@@ -156,6 +174,28 @@ export default function ChallengeCard({
           ✓ Flag captured by your team!
         </div>
       )}
+
+      <PenaltyModal
+        isOpen={showPenaltyModal}
+        penaltyCost={penaltyCost}
+        onConfirm={() => handleSubmit(undefined, true)}
+        onCancel={() => {
+          setShowPenaltyModal(false);
+          setSubmitting(false);
+        }}
+      />
+
+      <style jsx>{`
+        .penalty-warning {
+          font-size: 0.75rem;
+          color: var(--accent-color);
+          margin-bottom: 15px;
+          font-family: "Fira Code", monospace;
+          opacity: 0.8;
+          border-left: 2px solid var(--accent-color);
+          padding-left: 8px;
+        }
+      `}</style>
     </div>
   );
 }

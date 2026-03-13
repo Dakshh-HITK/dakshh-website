@@ -14,7 +14,7 @@ import {
   type RegisterInput,
 } from "@/lib/validations/auth";
 
-type AuthMode = "signin" | "signup" | "verify";
+type AuthMode = "signin" | "signup" | "verify" | "forgot-password" | "reset-password";
 const OTP_DEVICE_ID_KEY = "otp_device_id";
 
 function randomCrewmate() {
@@ -72,6 +72,11 @@ function AuthForm() {
   const [verificationEmail, setVerificationEmail] = useState("");
   const [verificationPassword, setVerificationPassword] = useState("");
   const [otpCode, setOtpCode] = useState("");
+
+  const [resetEmail, setResetEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [resetOtp, setResetOtp] = useState("");
 
   const [signUpData, setSignUpData] = useState<RegisterInput>({
     username: "",
@@ -284,6 +289,74 @@ function AuthForm() {
     setError("A fresh OTP has been sent to your email.");
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const deviceId = getOrCreateDeviceId();
+
+    const res = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: resetEmail, deviceId }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setLoading(false);
+
+    if (!res.ok) {
+      setError(data.error ?? "Could not process request");
+      return;
+    }
+
+    setMode("reset-password");
+    setError(data.message ?? "OTP sent. Please check your email.");
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (newPassword !== confirmNewPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+
+    setLoading(true);
+    const deviceId = getOrCreateDeviceId();
+
+    const res = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: resetEmail,
+        otp: resetOtp,
+        newPassword,
+        confirmPassword: confirmNewPassword,
+        deviceId,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setLoading(false);
+
+    if (!res.ok) {
+      setError(data.error ?? "Reset failed");
+      return;
+    }
+
+    setMode("signin");
+    setSignInEmail(resetEmail);
+    setError(data.message ?? "Password reset successful. Please sign in.");
+    setResetEmail("");
+    setResetOtp("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+  };
+
   const handleGoogleSignIn = () => {
     setError(null);
     signIn("google", { callbackUrl });
@@ -409,14 +482,22 @@ function AuthForm() {
                 ? "Sign In"
                 : mode === "signup"
                   ? "Create Account"
-                  : "Verify OTP"}
+                  : mode === "verify"
+                    ? "Verify OTP"
+                    : mode === "forgot-password"
+                      ? "Reset Password"
+                      : "Set New Password"}
             </h1>
             <p className="text-cyan text-sm mb-6">
               {mode === "signin"
                 ? "Welcome back, crewmate!"
                 : mode === "signup"
                   ? "Join the DAKSHH crew"
-                  : "Complete your onboarding mission"}
+                  : mode === "verify"
+                    ? "Complete your onboarding mission"
+                    : mode === "forgot-password"
+                      ? "Enter your email to receive an OTP"
+                      : "Verify OTP and set your new password"}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2 mb-6">
@@ -427,14 +508,15 @@ function AuthForm() {
                   setError(null);
                   setSignUpStep(1);
                   setOtpCode("");
+                  setResetOtp("");
                 }}
                 className={`w-full sm:flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all ${
-                  mode === "signin"
+                  mode === "signin" || mode === "forgot-password" || mode === "reset-password"
                     ? "bg-red-500/90 text-white border-2 border-white"
                     : "bg-transparent text-white/70 border-2 border-white/40 hover:border-white/60"
                 }`}
                 style={
-                  mode === "signin"
+                  mode === "signin" || mode === "forgot-password" || mode === "reset-password"
                     ? { background: "rgba(255, 70, 85, 0.9)" }
                     : {}
                 }
@@ -448,6 +530,7 @@ function AuthForm() {
                   setError(null);
                   setSignUpStep(1);
                   setOtpCode("");
+                  setResetOtp("");
                 }}
                 className={`w-full sm:flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all ${
                   mode === "signup"
@@ -513,6 +596,19 @@ function AuthForm() {
                       ) : (
                         <Eye size={20} />
                       )}
+                    </button>
+                  </div>
+                  <div className="flex justify-end mt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMode("forgot-password");
+                        setError(null);
+                        setResetEmail(signInEmail);
+                      }}
+                      className="text-xs text-cyan/80 hover:text-cyan transition-colors"
+                    >
+                      Forgot Password?
                     </button>
                   </div>
                 </div>
@@ -707,7 +803,7 @@ function AuthForm() {
                   </>
                 )}
               </form>
-            ) : (
+            ) : mode === "verify" ? (
               <form onSubmit={handleVerifyOtp} className="space-y-4">
                 <div className="mb-2 p-2 rounded-lg bg-white/5 border border-white/20 text-sm text-white/80">
                   <span className="text-cyan font-semibold">
@@ -749,6 +845,118 @@ function AuthForm() {
                 >
                   Resend OTP
                 </button>
+              </form>
+            ) : mode === "forgot-password" ? (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div>
+                  <label className="block text-cyan text-sm font-semibold mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="hand-drawn-input"
+                    placeholder="crewmate@example.com"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("signin");
+                      setError(null);
+                    }}
+                    className="hand-drawn-button w-full sm:flex-1 py-3 flex items-center justify-center"
+                    style={{ background: "rgba(0, 0, 0, 0.7)" }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="hand-drawn-button w-full sm:flex-1 py-3 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Sending..." : "Send OTP"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="mb-2 p-2 rounded-lg bg-white/5 border border-white/20 text-sm text-white/80">
+                  <p className="text-xs text-white/60 mb-1">Resetting password for:</p>
+                  <span className="text-cyan font-semibold">{resetEmail}</span>
+                </div>
+                <div>
+                  <label className="block text-cyan text-sm font-semibold mb-1">
+                    OTP
+                  </label>
+                  <input
+                    type="text"
+                    value={resetOtp}
+                    onChange={(e) =>
+                      setResetOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                    }
+                    className="hand-drawn-input"
+                    placeholder="Enter 6-digit OTP"
+                    required
+                    minLength={6}
+                    maxLength={6}
+                    inputMode="numeric"
+                    pattern="[0-9]{6}"
+                  />
+                </div>
+                <div>
+                  <label className="block text-cyan text-sm font-semibold mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="hand-drawn-input"
+                    placeholder="Min 8 characters"
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                  />
+                </div>
+                <div>
+                  <label className="block text-cyan text-sm font-semibold mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className="hand-drawn-input"
+                    placeholder="••••••••"
+                    required
+                    autoComplete="new-password"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("forgot-password");
+                      setError(null);
+                    }}
+                    className="hand-drawn-button w-full sm:flex-1 py-3 flex items-center justify-center"
+                    style={{ background: "rgba(0, 0, 0, 0.7)" }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="hand-drawn-button w-full sm:flex-1 py-3 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Resetting..." : "Reset Password"}
+                  </button>
+                </div>
               </form>
             )}
 
