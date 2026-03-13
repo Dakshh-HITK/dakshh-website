@@ -37,17 +37,16 @@ function hashFlag(flag: string): string {
   return crypto.createHash("sha256").update(flag.trim()).digest("hex");
 }
 
-const MAX_ATTEMPTS_BEFORE_LOCK = 5;
-const LOCK_DURATION_MS = 2 * 60 * 1000; // 2 minutes
+const MAX_FREE_ATTEMPTS = 10;
 
 /**
  * POST /api/submit
- * Body: { teamId, teamName, challengeId, flag, userId }
+ * Body: { teamId, teamName, challengeId, flag, userId, payPenalty }
  */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { teamId, teamName, challengeId, flag, userId } = body;
+    const { teamId, teamName, challengeId, flag, userId, payPenalty } = body;
 
     if (!teamId || !challengeId || !flag) {
       return NextResponse.json(
@@ -87,16 +86,44 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check lockout
-    if (attempt.locked_until && new Date() < attempt.locked_until) {
-      const remaining = Math.ceil(
-        (attempt.locked_until.getTime() - Date.now()) / 1000
-      );
-      return NextResponse.json(
+    // Penalty logic
+    let penaltyCost = 0;
+    if (attempt.attempts >= MAX_FREE_ATTEMPTS) {
+      penaltyCost = challenge.difficulty === "hard" ? 100 : 50;
+
+      if (!payPenalty) {
+        return NextResponse.json(
+          {
+            success: false,
+            requiresPenalty: true,
+            penaltyCost,
+            message: `You have exceeded ${MAX_FREE_ATTEMPTS} attempts! This submission will cost ${penaltyCost} points.`,
+          },
+          { status: 200 } // Using 200 to let frontend handle it gracefully
+        );
+      }
+
+      // Check if team has sufficient points
+      const teamScore = await CTFTeamScore.findOne({ teamId });
+      if (!teamScore || teamScore.score < penaltyCost) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Insufficient points for submission.",
+            message: "Insufficient points for submission.",
+          },
+          { status: 200 } // Keep it 200 so frontend can display the message easily
+        );
+      }
+
+      // Deduct penalty immediately
+      await CTFTeamScore.findOneAndUpdate(
+        { teamId },
         {
-          error: `Too many attempts. Try again in ${remaining} seconds.`,
+          $inc: { score: -penaltyCost },
+          $setOnInsert: { teamName: teamName || "Unknown Team" },
         },
-        { status: 429 }
+        { upsert: true, new: true }
       );
     }
 
@@ -120,7 +147,7 @@ export async function POST(req: NextRequest) {
       attempt.locked_until = null;
       await attempt.save();
 
-      // Update team score
+      // Update team score (award points)
       await CTFTeamScore.findOneAndUpdate(
         { teamId },
         {
@@ -132,23 +159,19 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: `Correct! +${challenge.points} points for your team!`,
+        message: `Correct! +${challenge.points} points for your team!${penaltyCost > 0 ? ` (Penalty of ${penaltyCost} deducted)` : ""}`,
         points: challenge.points,
       });
     }
 
     // Wrong flag
-    if (attempt.attempts >= MAX_ATTEMPTS_BEFORE_LOCK) {
-      attempt.locked_until = new Date(Date.now() + LOCK_DURATION_MS);
-      attempt.attempts = 0; // Reset counter after lock
-    }
     await attempt.save();
 
-    const attemptsLeft = MAX_ATTEMPTS_BEFORE_LOCK - attempt.attempts;
+    const attemptsLeft = MAX_FREE_ATTEMPTS - attempt.attempts;
     return NextResponse.json(
       {
         success: false,
-        message: `Wrong flag. ${attemptsLeft > 0 ? `${attemptsLeft} attempts left before lockout.` : ""}`,
+        message: `Wrong flag. ${penaltyCost > 0 ? `Cost: ${penaltyCost} pts.` : (attemptsLeft > 0 ? `${attemptsLeft} free attempts left.` : "Next attempt will cost points.")}`,
       },
       { status: 200 }
     );
