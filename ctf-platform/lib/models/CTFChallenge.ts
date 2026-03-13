@@ -11,6 +11,7 @@ export interface ICTFChallenge extends Document {
   section: string;
   sectionColor: string;
   flagHash: string;
+  enabled: boolean;
 }
 
 const CTFChallengeSchema = new Schema<ICTFChallenge>(
@@ -57,6 +58,10 @@ const CTFChallengeSchema = new Schema<ICTFChallenge>(
     flagHash: {
       type: String,
       required: true,
+    },
+    enabled: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

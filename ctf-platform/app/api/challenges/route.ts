@@ -20,8 +20,8 @@ export async function GET(req: NextRequest) {
       .select("-__v")
       .lean();
 
-    // Fetch all challenges (EXCLUDE the flag field!)
-    const challenges = await CTFChallenge.find({})
+    // Fetch all enabled challenges (EXCLUDE the flag field!)
+    const challenges = await CTFChallenge.find({ enabled: true })
       .select("-flagHash -__v")
       .sort({ section: 1, challengeId: 1 })
       .lean();

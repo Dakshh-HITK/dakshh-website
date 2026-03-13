@@ -12,7 +12,7 @@ export async function GET() {
   try {
     await connect();
 
-    const totalChallenges = await CTFChallenge.countDocuments();
+    const totalChallenges = await CTFChallenge.countDocuments({ enabled: true });
 
     // Get all team scores sorted
     const teams = await CTFTeamScore.find({})

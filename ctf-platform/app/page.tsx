@@ -315,7 +315,6 @@ export default function Home() {
         {/* Challenge sections from DB */}
         {sections.map((section) => {
           const sectionChallenges = getSectionChallenges(section.key);
-          if (sectionChallenges.length === 0) return null;
 
           return (
             <div key={section.key}>
@@ -323,20 +322,26 @@ export default function Home() {
                 <h2 style={{ color: section.color }}>{section.title}</h2>
                 <p>{section.subtitle}</p>
               </div>
-              <div className="challenges-grid">
-                {sectionChallenges.map((challenge) => (
-                  <ChallengeCard
-                    key={challenge.challengeId}
-                    challenge={challenge}
-                    teamId={teamInfo?.teamId || ""}
-                    teamName={teamInfo?.teamName || ""}
-                    userId={session?.user?.id || ""}
-                    solved={solvedIds.includes(challenge.challengeId)}
-                    csrfToken={csrfToken}
-                    onSolve={handleSolve}
-                  />
-                ))}
-              </div>
+              {sectionChallenges.length > 0 ? (
+                <div className="challenges-grid">
+                  {sectionChallenges.map((challenge) => (
+                    <ChallengeCard
+                      key={challenge.challengeId}
+                      challenge={challenge}
+                      teamId={teamInfo?.teamId || ""}
+                      teamName={teamInfo?.teamName || ""}
+                      userId={session?.user?.id || ""}
+                      solved={solvedIds.includes(challenge.challengeId)}
+                      csrfToken={csrfToken}
+                      onSolve={handleSolve}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div style={{ margin: "20px 0", color: "var(--text-secondary)", fontStyle: "italic", opacity: 0.8 }}>
+                  No challenges are currently active in this category.
+                </div>
+              )}
             </div>
           );
         })}
