@@ -492,10 +492,9 @@ export default function ResultsPage() {
             </div>
             {/* 1st */}
             <div className="flex flex-col items-center gap-2">
-              <CrownIcon
-                className="opacity-90"
-                style={{ animation: "results-crown 1.8s ease-in-out infinite" } as React.CSSProperties}
-              />
+              <div style={{ animation: "results-crown 1.8s ease-in-out infinite" }}>
+                <CrownIcon className="opacity-90" />
+              </div>
               <div
                 className="w-24 h-20 rounded-t-lg border-2 border-yellow-400/60 flex items-end justify-center pb-2"
                 style={{
@@ -673,11 +672,9 @@ export default function ResultsPage() {
                   {/* 1st Place */}
                   {minigameTop3[0] && (
                     <div className="flex flex-col items-center gap-2 flex-1 max-w-[160px]">
-                      <CrownIcon
-                        style={{
-                          animation: "results-crown 1.8s ease-in-out infinite",
-                        } as React.CSSProperties}
-                      />
+                      <div style={{ animation: "results-crown 1.8s ease-in-out infinite" }}>
+                        <CrownIcon />
+                      </div>
                       <div
                         className="relative"
                         style={{
