@@ -45,12 +45,12 @@ export const sponsors: Sponsor[] = [
       "https://form.idp.com/india/5kuqKYfmlUhODWdYkvtDL4?utm_source=bing&utm_medium=cpc&utm_campaign=bing_Brand&msclkid=bbc930ef2e8d129a0a08595c1196c05e",
     tier: "silver",
   },
-  // {
-  //   id: "s3",
-  //   name: "DevSpark Inc.",
-  //   logo_url:
-  //     "https://res.cloudinary.com/dnil7l0j1/image/upload/v1772567364/flutter_qbqwes.png",
-  //   website_url: "https://example.com",
-  //   tier: "silver",
-  // },
+  {
+    id: "s3",
+    name: "Banner and Co.",
+    logo_url:
+      "https://res.cloudinary.com/dnil7l0j1/image/upload/v1773432113/banner_and_co_dh3dn0.jpg",
+    // website_url: "https://example.com",
+    tier: "silver",
+  },
 ];
