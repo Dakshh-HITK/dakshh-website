@@ -6,6 +6,7 @@ import { DotOrbit } from "@paper-design/shaders-react";
 import Navbar from "@/app/components/Navbar";
 import HandDrawnCard from "@/app/components/HandDrawnCard";
 import toast from "react-hot-toast";
+import { ROBO_DANGAL_HARDCODED } from "@/constants/roboDangalResults";
 
 interface MinigamePlayer {
   username?: string;
@@ -34,8 +35,10 @@ interface EventResult {
   eventName: string;
   eventBanner?: string | null;
   eventCategory?: string | null;
+  eventPrizePool?: string | null;
   entries: ResultEntry[];
   publishedAt?: string | null;
+  _isRoboDangalHardcoded?: boolean;
 }
 
 const POSITION_ORDER = [
@@ -187,7 +190,13 @@ function EventResultCard({ result }: { result: EventResult }) {
   }
 
   const hasEntries = Object.keys(groupedEntries).length > 0;
-  const winner = groupedEntries["winner"]?.[0];
+  const teamNames = Object.values(groupedEntries).flatMap((entries) =>
+    entries.map(
+      (e) => e.teamName || e.participants[0]?.name || "Unknown"
+    )
+  );
+  const uniqueTeamNames = [...new Set(teamNames)];
+  const teamNamesPreview = uniqueTeamNames.join(", ");
 
   return (
     <HandDrawnCard className="overflow-hidden">
@@ -208,24 +217,35 @@ function EventResultCard({ result }: { result: EventResult }) {
               />
             </div>
           )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wide group-hover:text-yellow-400 transition-colors duration-200">
-                {result.eventName}
-              </h2>
-              {result.eventCategory && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/20">
+          <div className="flex-1 min-w-0 w-full text-left">
+            <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wide group-hover:text-yellow-400 transition-colors duration-200 !text-left" style={{ marginBottom: "0rem" }}>
+              {result.eventName}
+            </h2>
+            {result.eventCategory && (
+              <div className="mt-1.5 text-left">
+                <span className="inline-flex items-center text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/70 border border-white/20 font-medium">
                   {result.eventCategory}
                 </span>
-              )}
-            </div>
-            {winner && (
-              <div className="mt-1.5 flex items-center gap-2">
-                <span className="text-yellow-400 font-black text-sm">★</span>
-                <span className="text-yellow-300 text-sm font-semibold">
-                  {winner.teamName || winner.participants[0]?.name || "Unknown"}
-                  {winner.participants.length > 1 &&
-                    ` & ${winner.participants.length - 1} more`}
+              </div>
+            )}
+            {result.eventPrizePool && (
+              <div className="mt-1.5 flex items-center gap-1.5 text-left">
+                <span className="text-yellow-500/90 text-sm">🏆</span>
+                <span
+                  className="font-semibold text-sm tracking-wide text-yellow-400/95"
+                  style={{
+                    textShadow: "0 0 12px rgba(234,179,8,0.35)",
+                  }}
+                >
+                  {result.eventPrizePool}
+                </span>
+              </div>
+            )}
+            {teamNamesPreview && (
+              <div className="mt-1.5 flex items-start justify-start gap-2 text-left">
+                <span className="text-yellow-400 font-black text-sm shrink-0">★</span>
+                <span className="text-yellow-300 text-sm font-semibold break-words">
+                  {teamNamesPreview}
                 </span>
               </div>
             )}
@@ -347,8 +367,218 @@ function EventResultCard({ result }: { result: EventResult }) {
   );
 }
 
+function RoboDangalSubEventTeam({
+  teamName,
+  members,
+}: {
+  teamName: string;
+  members: readonly string[];
+  isWinner?: boolean;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const isSolo = members.length === 1;
+
+  if (isSolo) {
+    return (
+      <span className="font-bold text-white text-lg">
+        {teamName} — {members[0]}
+      </span>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-2 group"
+      >
+        <span className="font-bold text-white text-lg group-hover:text-cyan-300 transition-colors underline decoration-dotted underline-offset-4">
+          {teamName}
+        </span>
+        <span className="text-white/50 text-sm">
+          ({members.length} members)
+        </span>
+        <span
+          className="text-white/40 text-xs transition-transform duration-300 inline-block"
+          style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}
+        >
+          ▼
+        </span>
+      </button>
+      {expanded && (
+        <div className="mt-2 pl-3 border-l-2 border-white/20 space-y-1">
+          {members.map((name, i) => (
+            <div key={i} className="text-sm text-white/70 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-white/30 shrink-0" />
+              {name}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RoboDangalResultCard({
+  eventBanner,
+  eventCategory,
+  eventPrizePool,
+}: {
+  eventBanner?: string | null;
+  eventCategory?: string | null;
+  eventPrizePool?: string | null;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const data = ROBO_DANGAL_HARDCODED;
+  const teamNames = data.subEvents.flatMap((s) => [
+    s.winner.teamName,
+    s.runnerUp.teamName,
+  ]);
+  const teamNamesPreview = teamNames.join(", ");
+
+  return (
+    <HandDrawnCard className="overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full text-left p-5 sm:p-6 group"
+      >
+        <div className="flex items-start gap-4">
+          {eventBanner && (
+            <div
+              className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/40 shrink-0 bg-black/40"
+              style={{ filter: "url(#wobbly-border)" }}
+            >
+              <img
+                src={eventBanner}
+                alt={data.eventName}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          <div className="flex-1 min-w-0 w-full text-left">
+            <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wide group-hover:text-yellow-400 transition-colors duration-200 !text-left" style={{ marginBottom: "0rem" }}>
+              {data.eventName}
+            </h2>
+            {eventCategory && (
+              <div className="mt-1.5 text-left">
+                <span className="inline-flex items-center text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/70 border border-white/20 font-medium">
+                  {eventCategory}
+                </span>
+              </div>
+            )}
+            {eventPrizePool && (
+              <div className="mt-1.5 flex items-center gap-1.5 text-left">
+                <span className="text-yellow-500/90 text-sm">🏆</span>
+                <span
+                  className="font-semibold text-sm tracking-wide text-yellow-400/95"
+                  style={{
+                    textShadow: "0 0 12px rgba(234,179,8,0.35)",
+                  }}
+                >
+                  {eventPrizePool}
+                </span>
+              </div>
+            )}
+            {teamNamesPreview && (
+              <div className="mt-1.5 flex items-start justify-start gap-2 text-left">
+                <span className="text-yellow-400 font-black text-sm shrink-0">★</span>
+                <span className="text-yellow-300 text-sm font-semibold break-words">
+                  {teamNamesPreview}
+                </span>
+              </div>
+            )}
+          </div>
+          <span
+            className="text-white/40 text-lg shrink-0 transition-transform duration-300 mt-1 inline-block"
+            style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}
+          >
+            ▼
+          </span>
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="px-5 sm:px-6 pb-6 space-y-6 border-t border-white/10 pt-5">
+          {data.subEvents.map((sub) => (
+            <div key={sub.name}>
+              <div className="flex items-center gap-3 mb-3">
+                <h3 className="font-bold text-lg uppercase tracking-wider text-white/90">
+                  {sub.name}
+                </h3>
+              </div>
+
+              <div className="space-y-3">
+                {/* Winner */}
+                <div
+                  className={`relative rounded-xl border bg-gradient-to-br ${POSITION_CONFIG.winner.color} ${POSITION_CONFIG.winner.border} p-4 shadow-lg ${POSITION_CONFIG.winner.glow} overflow-hidden`}
+                  style={{
+                    boxShadow:
+                      "0 0 24px 2px rgba(234,179,8,0.15), 0 4px 20px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <div className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(105deg, transparent 35%, rgba(255,215,0,0.07) 50%, transparent 65%)",
+                      animation: "results-shimmer 3s ease-in-out infinite",
+                    }}
+                  />
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl" style={{ animation: "results-bounce 1.5s ease-in-out infinite" }}>
+                      {POSITION_CONFIG.winner.emoji}
+                    </span>
+                    <span className={`font-bold text-lg uppercase tracking-wider ${POSITION_CONFIG.winner.text}`}>
+                      {POSITION_CONFIG.winner.label}
+                    </span>
+                    <span className="ml-auto text-xs text-yellow-400/50 uppercase tracking-widest">
+                      ✦ Champion ✦
+                    </span>
+                  </div>
+                  <div className="relative z-10">
+                    <RoboDangalSubEventTeam
+                      teamName={sub.winner.teamName}
+                      members={sub.winner.members}
+                      isWinner
+                    />
+                  </div>
+                </div>
+
+                {/* Runner-up */}
+                <div
+                  className={`relative rounded-xl border bg-gradient-to-br ${POSITION_CONFIG.runner_up.color} ${POSITION_CONFIG.runner_up.border} p-4 shadow-lg ${POSITION_CONFIG.runner_up.glow} overflow-hidden`}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">
+                      {POSITION_CONFIG.runner_up.emoji}
+                    </span>
+                    <span className={`font-bold text-lg uppercase tracking-wider ${POSITION_CONFIG.runner_up.text}`}>
+                      {POSITION_CONFIG.runner_up.label}
+                    </span>
+                  </div>
+                  <div>
+                    <RoboDangalSubEventTeam
+                      teamName={sub.runnerUp.teamName}
+                      members={sub.runnerUp.members}
+                      isWinner={false}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </HandDrawnCard>
+  );
+}
+
 export default function ResultsPage() {
   const [results, setResults] = useState<EventResult[]>([]);
+  const [roboDangalEvent, setRoboDangalEvent] = useState<{
+    banner: string | null;
+    category: string | null;
+    prizePool: string | null;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [hidden, setHidden] = useState(false);
   const [minigameTop3, setMinigameTop3] = useState<MinigamePlayer[]>([]);
@@ -381,7 +611,19 @@ export default function ResultsPage() {
           setLoading(false);
           return;
         }
-        setResults(Array.isArray(data) ? data : []);
+        const apiResults = Array.isArray(data) ? data : (data.results ?? []);
+        setRoboDangalEvent(data.roboDangalEvent ?? null);
+        const filtered = apiResults.filter(
+          (r: EventResult) => !/robo\s*dangal/i.test(r.eventName ?? "")
+        );
+        const roboDangalResult: EventResult = {
+          eventId: "robo-dangal-hardcoded",
+          eventName: "ROBO DANGAL",
+          eventPrizePool: "₹18,000",
+          entries: [],
+          _isRoboDangalHardcoded: true,
+        };
+        setResults([roboDangalResult, ...filtered]);
       } catch (err) {
         console.error(err);
         toast.error("Failed to load results");
@@ -575,7 +817,15 @@ export default function ResultsPage() {
                   animation: `results-card-in 0.4s ease-out ${i * 0.08}s both`,
                 }}
               >
-                <EventResultCard result={result} />
+                {result._isRoboDangalHardcoded ? (
+                  <RoboDangalResultCard
+                    eventBanner={roboDangalEvent?.banner}
+                    eventCategory={roboDangalEvent?.category}
+                    eventPrizePool={roboDangalEvent?.prizePool}
+                  />
+                ) : (
+                  <EventResultCard result={result} />
+                )}
               </div>
             ))}
           </div>
